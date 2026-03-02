@@ -18,9 +18,35 @@ const Login = () => {
     }));
   }
 
-  function handleSubmit(e) {
+  async function handleSubmit(e) {
     e.preventDefault();
-    console.log(form);
+
+    try {
+      const response = await fetch(
+        "https://devpathtracker-production.up.railway.app/auth/login",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            username: form.name,
+            password: form.password,
+          }),
+        },
+      );
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        throw new Error(errorText);
+      }
+
+      const result = await response.json();
+      console.log(result);
+      setForm({ name: "", password: "" });
+    } catch (error) {
+      console.log("Error:", error.message);
+    }
   }
 
   return (
