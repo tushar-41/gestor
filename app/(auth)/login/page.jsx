@@ -1,12 +1,14 @@
 "use client";
-import React, { useState } from "react";
+import Link from "next/link";
+import { useState } from "react";
+import { toast } from "sonner";
 
 const Login = () => {
   const [form, setForm] = useState({
     name: "",
     password: "",
   });
-
+  const [isLoading, setIsLoading] = useState(false);
   const [passType, setPassType] = useState(true);
 
   function handleForm(e) {
@@ -20,6 +22,7 @@ const Login = () => {
 
   async function handleSubmit(e) {
     e.preventDefault();
+    setIsLoading(true);
 
     try {
       const response = await fetch(
@@ -42,10 +45,13 @@ const Login = () => {
       }
 
       const result = await response.json();
-      console.log(result);
+      localStorage.setItem("token", result.token);
+      setIsLoading(false);
       setForm({ name: "", password: "" });
+      toast.success("Welcome to Gestor");
     } catch (error) {
-      console.log("Error:", error.message);
+      setIsLoading(false);
+      toast.error(error.message);
     }
   }
 
@@ -101,8 +107,18 @@ const Login = () => {
           type="submit"
           className="w-full py-3 rounded-lg bg-purple-600 hover:bg-purple-700 transition text-white font-semibold"
         >
-          Login
+          {isLoading ? (
+            <span className="animate-pulse text-xl">Logging In...</span>
+          ) : (
+            "Login"
+          )}
         </button>
+        <p className="text-gray-500 dark:text-white text-sm text-center">
+          New to Gestor ?{" "}
+          <Link href={"/signup"} className="text-sm text-pink-500">
+            Register here
+          </Link>
+        </p>
       </form>
     </div>
   );
