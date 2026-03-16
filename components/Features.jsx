@@ -1,6 +1,3 @@
-"use client";
-import { useState } from "react";
-
 const ALL_FEATURES = [
   {
     id: 1,
@@ -154,12 +151,8 @@ function FeatureCard({ feature }) {
   );
 }
 
-const COUNT_OPTIONS = [3, 4, 6];
-
 export default function FeaturesSection() {
-  const [count, setCount] = useState(6);
-
-  const visible = ALL_FEATURES.slice(0, count);
+  const visible = ALL_FEATURES;
 
   return (
     <section id="features" className="py-28 px-6 bg-slate-50/60">
@@ -181,28 +174,8 @@ export default function FeaturesSection() {
           </p>
         </div>
 
-        {/* Feature count selector */}
-        <div className="flex items-center gap-2 mb-10">
-          <span className="text-[13px] text-slate-400 mr-1">Show</span>
-          {COUNT_OPTIONS.map((n) => (
-            <button
-              key={n}
-              onClick={() => setCount(n)}
-              className={`px-3.5 py-1.5 rounded-lg text-[13px] font-medium transition-all duration-150 ${
-                count === n
-                  ? "bg-blue-600 text-white shadow-sm"
-                  : "bg-white border border-slate-200 text-slate-500 hover:border-blue-200 hover:text-blue-600"
-              }`}
-            >
-              {n} features
-            </button>
-          ))}
-        </div>
-
         {/* Feature grid */}
-        <div
-          className={`grid gap-4 ${count === 3 ? "grid-cols-1 md:grid-cols-3" : count === 4 ? "grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-4" : "grid-cols-1 sm:grid-cols-2 md:grid-cols-3"}`}
-        >
+        <div className={"grid gap-4 grid-cols-1 sm:grid-cols-2 md:grid-cols-3"}>
           {visible.map((feature) => (
             <FeatureCard key={feature.id} feature={feature} />
           ))}
