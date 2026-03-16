@@ -4,46 +4,34 @@ import { useState } from "react";
 import { toast } from "sonner";
 
 const Login = () => {
-  const [form, setForm] = useState({
-    name: "",
-    password: "",
-  });
+  const [form, setForm] = useState({ name: "", password: "" });
   const [isLoading, setIsLoading] = useState(false);
   const [passType, setPassType] = useState(true);
 
   function handleForm(e) {
     const { name, value } = e.target;
-
-    setForm((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
+    setForm((prev) => ({ ...prev, [name]: value }));
   }
 
   async function handleSubmit(e) {
     e.preventDefault();
     setIsLoading(true);
-
     try {
       const response = await fetch(
         "https://devpathtracker-production.up.railway.app/auth/login",
         {
           method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
+          headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
             username: form.name,
             password: form.password,
           }),
         },
       );
-
       if (!response.ok) {
         const errorText = await response.text();
         throw new Error(errorText);
       }
-
       const result = await response.json();
       localStorage.setItem("token", result.token);
       setIsLoading(false);
@@ -56,70 +44,226 @@ const Login = () => {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-linear-to-br from-black via-neutral-900 to-neutral-800">
-      <form
-        onSubmit={handleSubmit}
-        className="w-full max-w-md bg-neutral-900 border border-neutral-700 p-8 rounded-2xl shadow-2xl space-y-6"
-      >
-        <h2 className="text-3xl font-bold text-center text-white">
-          Welcome Back
-        </h2>
+    <div
+      className="min-h-screen bg-white flex"
+      style={{ fontFamily: "'DM Sans', sans-serif" }}
+    >
+      {/* ── Left panel — branding ── */}
+      <div className="hidden lg:flex w-[45%] bg-slate-50 border-r border-slate-100 flex-col justify-between p-12 relative overflow-hidden">
+        {/* Subtle grid */}
+        <div
+          className="absolute inset-0 opacity-[0.03]"
+          style={{
+            backgroundImage:
+              "linear-gradient(#1e40af 1px, transparent 1px), linear-gradient(90deg, #1e40af 1px, transparent 1px)",
+            backgroundSize: "40px 40px",
+          }}
+        />
+        {/* Blue glow */}
+        <div className="absolute bottom-0 left-0 w-80 h-80 bg-blue-100 rounded-full blur-3xl opacity-50 pointer-events-none" />
 
-        {/* Name Field */}
-        <div className="space-y-2">
-          <label className="text-sm text-neutral-300">Name</label>
-          <input
-            type="text"
-            name="name"
-            placeholder="Enter your name"
-            value={form.name}
-            onChange={handleForm}
-            className="w-full px-4 py-3 rounded-lg bg-neutral-800 border border-neutral-600 focus:outline-none focus:ring-2 focus:ring-purple-500 text-white placeholder-neutral-500 transition"
-          />
+        {/* Logo */}
+        <div className="relative flex items-center gap-2.5">
+          <div className="w-8 h-8 rounded-lg bg-blue-600 flex items-center justify-center">
+            <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+              <rect x="1" y="1" width="5" height="5" rx="1" fill="white" />
+              <rect
+                x="8"
+                y="1"
+                width="5"
+                height="5"
+                rx="1"
+                fill="white"
+                opacity="0.6"
+              />
+              <rect
+                x="1"
+                y="8"
+                width="5"
+                height="5"
+                rx="1"
+                fill="white"
+                opacity="0.6"
+              />
+              <rect
+                x="8"
+                y="8"
+                width="5"
+                height="5"
+                rx="1"
+                fill="white"
+                opacity="0.3"
+              />
+            </svg>
+          </div>
+          <span className="text-[16px] font-semibold text-slate-900 tracking-tight">
+            gestor
+          </span>
         </div>
 
-        {/* Password Field */}
-        <div className="space-y-2">
-          <label className="text-sm text-neutral-300">Password</label>
+        {/* Quote / value prop */}
+        <div className="relative">
+          <p
+            className="text-[32px] font-semibold text-slate-900 leading-tight tracking-tight mb-4"
+            style={{ fontFamily: "'Playfair Display', Georgia, serif" }}
+          >
+            Every great idea
+            <br />
+            starts with a note.
+          </p>
+          <p className="text-[14px] text-slate-500 font-light leading-relaxed max-w-xs">
+            Capture your thoughts, track your tasks, and stay on top of
+            everything that matters — all in one place.
+          </p>
+        </div>
 
-          <div className="relative">
-            <input
-              type={passType ? "password" : "text"}
-              name="password"
-              placeholder="Enter your password"
-              value={form.password}
-              onChange={handleForm}
-              className="w-full px-4 py-3 rounded-lg bg-neutral-800 border border-neutral-600 focus:outline-none focus:ring-2 focus:ring-purple-500 text-white placeholder-neutral-500 transition pr-16"
-            />
-
-            <button
-              type="button"
-              onClick={() => setPassType((prev) => !prev)}
-              className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-purple-400 hover:text-purple-300 transition"
-            >
-              {passType ? "Show" : "Hide"}
-            </button>
+        {/* Fake testimonial */}
+        <div className="relative bg-white border border-slate-200 rounded-2xl p-5 shadow-sm">
+          <p className="text-[13px] text-slate-600 font-light leading-relaxed mb-3">
+            "Gestor completely changed how I manage my study notes. Everything
+            is finally in one place."
+          </p>
+          <div className="flex items-center gap-2.5">
+            <div className="w-7 h-7 rounded-full bg-blue-600 flex items-center justify-center text-white text-[11px] font-bold">
+              AM
+            </div>
+            <div>
+              <p className="text-[12px] font-semibold text-slate-800">
+                Aryan M.
+              </p>
+              <p className="text-[11px] text-slate-400 font-light">
+                Software Engineer
+              </p>
+            </div>
           </div>
         </div>
+      </div>
 
-        {/* Submit */}
-        <button
-          type="submit"
-          className="w-full py-3 rounded-lg bg-purple-600 hover:bg-purple-700 transition text-white font-semibold"
-        >
-          {isLoading ? (
-            <span className="animate-pulse text-xl">Logging In...</span>
-          ) : (
-            "Login"
-          )}
-        </button>
-        <p className="text-gray-500 dark:text-white text-sm text-center">
-          New to Gestor ?{" "}
-          <Link href={"/signup"} className="text-sm text-pink-500">
-            Register here
-          </Link>
-        </p>
-      </form>
+      {/* ── Right panel — form ── */}
+      <div className="flex-1 flex items-center justify-center px-6 py-12">
+        <div className="w-full max-w-sm">
+          {/* Mobile logo */}
+          <div className="lg:hidden flex items-center gap-2 mb-10">
+            <div className="w-7 h-7 rounded-lg bg-blue-600 flex items-center justify-center">
+              <svg width="13" height="13" viewBox="0 0 14 14" fill="none">
+                <rect x="1" y="1" width="5" height="5" rx="1" fill="white" />
+                <rect
+                  x="8"
+                  y="1"
+                  width="5"
+                  height="5"
+                  rx="1"
+                  fill="white"
+                  opacity="0.6"
+                />
+                <rect
+                  x="1"
+                  y="8"
+                  width="5"
+                  height="5"
+                  rx="1"
+                  fill="white"
+                  opacity="0.6"
+                />
+                <rect
+                  x="8"
+                  y="8"
+                  width="5"
+                  height="5"
+                  rx="1"
+                  fill="white"
+                  opacity="0.3"
+                />
+              </svg>
+            </div>
+            <span className="text-[15px] font-semibold text-slate-900">
+              gestor
+            </span>
+          </div>
+
+          {/* Heading */}
+          <div className="mb-8">
+            <h1
+              className="text-[28px] font-semibold text-slate-900 tracking-tight leading-tight mb-1.5"
+              style={{ fontFamily: "'Playfair Display', Georgia, serif" }}
+            >
+              Welcome back
+            </h1>
+            <p className="text-[14px] text-slate-400 font-light">
+              Sign in to continue to your workspace.
+            </p>
+          </div>
+
+          {/* Form */}
+          <form onSubmit={handleSubmit} className="space-y-4">
+            {/* Name */}
+            <div>
+              <label className="block text-[12px] font-semibold text-slate-600 uppercase tracking-wider mb-1.5">
+                Username
+              </label>
+              <input
+                type="text"
+                name="name"
+                placeholder="Enter your username"
+                value={form.name}
+                onChange={handleForm}
+                className="w-full px-4 py-3 rounded-xl bg-slate-50 border border-slate-200 focus:outline-none focus:border-blue-400 focus:bg-white focus:ring-4 focus:ring-blue-50 text-slate-800 placeholder-slate-400 text-[14px] transition-all"
+              />
+            </div>
+
+            {/* Password */}
+            <div>
+              <label className="block text-[12px] font-semibold text-slate-600 uppercase tracking-wider mb-1.5">
+                Password
+              </label>
+              <div className="relative">
+                <input
+                  type={passType ? "password" : "text"}
+                  name="password"
+                  placeholder="Enter your password"
+                  value={form.password}
+                  onChange={handleForm}
+                  className="w-full px-4 py-3 rounded-xl bg-slate-50 border border-slate-200 focus:outline-none focus:border-blue-400 focus:bg-white focus:ring-4 focus:ring-blue-50 text-slate-800 placeholder-slate-400 text-[14px] transition-all pr-16"
+                />
+                <button
+                  type="button"
+                  onClick={() => setPassType((p) => !p)}
+                  className="absolute right-3.5 top-1/2 -translate-y-1/2 text-[12px] font-medium text-blue-500 hover:text-blue-700 transition-colors"
+                >
+                  {passType ? "Show" : "Hide"}
+                </button>
+              </div>
+            </div>
+
+            {/* Submit */}
+            <button
+              type="submit"
+              disabled={isLoading}
+              className="w-full py-3 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-[14px] font-medium transition-all shadow-sm hover:shadow-blue-200 hover:shadow-md active:scale-[0.98] mt-2 disabled:opacity-60 disabled:cursor-not-allowed"
+            >
+              {isLoading ? (
+                <span className="flex items-center justify-center gap-2">
+                  <span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                  Signing in...
+                </span>
+              ) : (
+                "Sign in"
+              )}
+            </button>
+          </form>
+
+          {/* Footer link */}
+          <p className="text-center text-[13px] text-slate-400 font-light mt-6">
+            New to Gestor?{" "}
+            <Link
+              href="/signup"
+              className="text-blue-600 font-medium hover:text-blue-700 transition-colors"
+            >
+              Create an account
+            </Link>
+          </p>
+        </div>
+      </div>
     </div>
   );
 };
