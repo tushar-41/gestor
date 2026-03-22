@@ -12,15 +12,46 @@ export default function DashboardLayout({ children }) {
   const [isLoading, setIsLoading] = useState(true);
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [searchOpen, setSearchOpen] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
 
+  // Check authentication and initialize sidebar state
   useEffect(() => {
     const token = getToken();
     if (!token) {
-      router.push("/");
+      router.push("/login");
       return;
     }
+
+    // Load sidebar state from localStorage
+    const savedSidebarState = localStorage.getItem("sidebarOpen");
+    if (savedSidebarState !== null) {
+      setSidebarOpen(JSON.parse(savedSidebarState));
+    }
+
+    // Check if mobile
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 1024);
+      // On mobile, close sidebar by default
+      if (window.innerWidth < 1024) {
+        setSidebarOpen(false);
+      }
+    };
+
+    checkMobile();
+    window.addEventListener("resize", checkMobile);
     setIsLoading(false);
+
+    return () => window.removeEventListener("resize", checkMobile);
   }, [router]);
+
+  // Save sidebar state to localStorage whenever it changes
+  useEffect(() => {
+    localStorage.setItem("sidebarOpen", JSON.stringify(sidebarOpen));
+  }, [sidebarOpen]);
+
+  const handleToggleSidebar = () => {
+    setSidebarOpen(!sidebarOpen);
+  };
 
   if (isLoading) {
     return (
@@ -41,14 +72,18 @@ export default function DashboardLayout({ children }) {
       {/* Top Navbar */}
       <DashboardNavbar
         onSearchOpen={() => setSearchOpen(true)}
-        onToggleSidebar={() => setSidebarOpen(!sidebarOpen)}
-        isSidebarOpen={sidebarOpen}
+        onMobileToggleSidebar={handleToggleSidebar}
+        isMobile={isMobile}
       />
 
       {/* Main Content Area */}
       <div className="flex flex-1 overflow-hidden">
         {/* Sidebar */}
-        <DashboardSidebar isOpen={sidebarOpen} onToggle={() => setSidebarOpen(!sidebarOpen)} />
+        <DashboardSidebar
+          isOpen={sidebarOpen}
+          onToggle={handleToggleSidebar}
+          isMobile={isMobile}
+        />
 
         {/* Main Content */}
         <main className="flex-1 overflow-auto flex flex-col">
@@ -61,4 +96,3 @@ export default function DashboardLayout({ children }) {
     </div>
   );
 }
-
