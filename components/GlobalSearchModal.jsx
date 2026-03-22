@@ -38,9 +38,23 @@ export default function GlobalSearchModal({ isOpen, onClose }) {
 
     try {
       setIsLoading(true);
-      // You can implement actual search API call here
-      // For now, we'll leave it as placeholder
-      setResults({ topics: [], notes: [] });
+
+      const result = await apiCall(`/api/search?q=${query}`);
+
+      if (result.results) {
+        const topics = [];
+        const notes = [];
+
+        for (let it of result.results) {
+          if (it.type === "TOPIC") {
+            topics.push(it.id);
+          } else {
+            notes.push(it.id);
+          }
+        }
+
+        setResults({ topics, notes });
+      }
     } catch (error) {
       console.error("Search failed:", error);
     } finally {

@@ -42,6 +42,7 @@ export default function DashboardLayout({ children }) {
       <DashboardNavbar
         onSearchOpen={() => setSearchOpen(true)}
         onToggleSidebar={() => setSidebarOpen(!sidebarOpen)}
+        isSidebarOpen={sidebarOpen}
       />
 
       {/* Main Content Area */}
