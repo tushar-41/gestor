@@ -1,14 +1,23 @@
 "use client";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { toast } from "sonner";
+import { getToken } from "@/lib/auth";
 
 const Signup = () => {
   const [form, setForm] = useState({ name: "", password: "" });
   const [isLoading, setIsLoading] = useState(false);
   const [passType, setPassType] = useState(true);
   const router = useRouter();
+
+  // Redirect to dashboard if already authenticated
+  useEffect(() => {
+    const token = getToken();
+    if (token) {
+      router.push("/dashboard");
+    }
+  }, [router]);
 
   function handleForm(e) {
     const { name, value } = e.target;
@@ -20,7 +29,7 @@ const Signup = () => {
     e.preventDefault();
     try {
       const response = await fetch(
-        "https://devpathtracker-production.up.railway.app/auth/signup",
+        "https://devpathtracker.up.railway.app/auth/signup",
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },

@@ -1,12 +1,23 @@
 "use client";
 import Link from "next/link";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import { toast } from "sonner";
+import { getToken } from "@/lib/auth";
 
 const Login = () => {
+  const router = useRouter();
   const [form, setForm] = useState({ name: "", password: "" });
   const [isLoading, setIsLoading] = useState(false);
   const [passType, setPassType] = useState(true);
+
+  // Redirect to dashboard if already authenticated
+  useEffect(() => {
+    const token = getToken();
+    if (token) {
+      router.push("/dashboard");
+    }
+  }, [router]);
 
   function handleForm(e) {
     const { name, value } = e.target;
@@ -18,7 +29,7 @@ const Login = () => {
     setIsLoading(true);
     try {
       const response = await fetch(
-        "https://devpathtracker-production.up.railway.app/auth/login",
+        "https://devpathtracker.up.railway.app/auth/login",
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -37,6 +48,8 @@ const Login = () => {
       setIsLoading(false);
       setForm({ name: "", password: "" });
       toast.success("Welcome to Gestor");
+      // Redirect to dashboard after successful login
+      router.push("/dashboard");
     } catch (error) {
       setIsLoading(false);
       toast.error(error.message);

@@ -39,3 +39,10 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+COMPLETE_REVAMP_SUMMARY.md
+DASHBOARD_ROUTES.md
+DASHBOARD_SUMMARY.md
+DASHBOARD_SUMMARY.txt
+NEW_ROUTE_PLAN.md
+NOTES_FEATURE_SUMMARY.md
