@@ -92,7 +92,7 @@ const Dashboard = () => {
                 {streak?.currentStreak || 0}
               </h3>
             </div>
-            <div className="w-10 h-10 lg:w-12 lg:h-12 rounded-lg bg-orange-50 text-orange-600 flex items-center justify-center flex-shrink-0">
+            <div className="w-10 h-10 lg:w-12 lg:h-12 rounded-lg bg-orange-50 text-orange-600 flex items-center justify-center shrink-0">
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
                 <path
                   d="M12 2L15 10H23L17 15L19 23L12 18L5 23L7 15L1 10H9L12 2Z"
@@ -115,7 +115,7 @@ const Dashboard = () => {
                 {stats?.totalTopics || 0}
               </h3>
             </div>
-            <div className="w-10 h-10 lg:w-12 lg:h-12 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center flex-shrink-0">
+            <div className="w-10 h-10 lg:w-12 lg:h-12 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center shrink-0">
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
                 <path
                   d="M5 13L9 17L19 7"
@@ -141,7 +141,7 @@ const Dashboard = () => {
                 {totalHours}h
               </h3>
             </div>
-            <div className="w-10 h-10 lg:w-12 lg:h-12 rounded-lg bg-purple-50 text-purple-600 flex items-center justify-center flex-shrink-0">
+            <div className="w-10 h-10 lg:w-12 lg:h-12 rounded-lg bg-purple-50 text-purple-600 flex items-center justify-center shrink-0">
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
                 <circle
                   cx="12"
@@ -173,7 +173,7 @@ const Dashboard = () => {
                 {stats?.averageConfidence || 0}/5
               </h3>
             </div>
-            <div className="w-10 h-10 lg:w-12 lg:h-12 rounded-lg bg-yellow-50 text-yellow-600 flex items-center justify-center flex-shrink-0">
+            <div className="w-10 h-10 lg:w-12 lg:h-12 rounded-lg bg-yellow-50 text-yellow-600 flex items-center justify-center shrink-0">
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
                 <path
                   d="M12 2L15 10H23L17 15L19 23L12 18L5 23L7 15L1 10H9L12 2Z"
@@ -383,7 +383,7 @@ const Dashboard = () => {
           <div className="overflow-x-auto">
             <div className="flex gap-4 pb-4 min-w-max lg:min-w-0">
               {recentMonths.map((month, idx) => (
-                <div key={idx} className="flex-1 min-w-[120px] text-center">
+                <div key={idx} className="flex-1 min-w-30 text-center">
                   <div className="space-y-2 mb-3">
                     <div className="flex items-end justify-center gap-1 h-24 bg-slate-50 p-3 rounded-lg">
                       <div
@@ -427,9 +427,9 @@ const Dashboard = () => {
 
       {/* Journey Info */}
       {stats?.journeyStartDate && (
-        <div className="bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200 rounded-2xl p-6">
+        <div className="bg-linear-to-r from-blue-50 to-indigo-50 border border-blue-200 rounded-2xl p-6">
           <div className="flex items-start gap-4">
-            <div className="w-12 h-12 rounded-lg bg-blue-600 text-white flex items-center justify-center flex-shrink-0">
+            <div className="w-12 h-12 rounded-lg bg-blue-600 text-white flex items-center justify-center shrink-0">
               <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
                 <path
                   d="M10 3v14M3 10h14"

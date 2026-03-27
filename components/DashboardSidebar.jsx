@@ -36,7 +36,7 @@ export default function DashboardSidebar({ isOpen, onToggle, isMobile }) {
     }
   };
 
-  const handleLogout = async () => {
+  const handleLogout = () => {
     setIsLoggingOut(true);
     logout();
   };

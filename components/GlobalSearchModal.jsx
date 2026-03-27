@@ -205,7 +205,7 @@ export default function GlobalSearchModal({ isOpen, onClose }) {
                   >
                     <div className="flex items-start gap-4">
                       {/* Icon */}
-                      <div className="flex-shrink-0 mt-1">
+                      <div className="shrink-0 mt-1">
                         {item.type === "TOPIC" ? (
                           <div className="w-10 h-10 rounded-lg bg-blue-100 text-blue-600 flex items-center justify-center">
                             <svg
@@ -327,7 +327,7 @@ export default function GlobalSearchModal({ isOpen, onClose }) {
                       </div>
 
                       {/* Arrow */}
-                      <div className="flex-shrink-0 mt-1">
+                      <div className="shrink-0 mt-1">
                         <svg
                           width="20"
                           height="20"

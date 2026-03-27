@@ -29,7 +29,7 @@ const Signup = () => {
     e.preventDefault();
     try {
       const response = await fetch(
-        "https://devpathtracker.up.railway.app/auth/signup",
+        "https://devpathtracker-prod.up.railway.app/auth/signup",
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },

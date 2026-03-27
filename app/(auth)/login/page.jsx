@@ -29,7 +29,7 @@ const Login = () => {
     setIsLoading(true);
     try {
       const response = await fetch(
-        "https://devpathtracker.up.railway.app/auth/login",
+        "https://devpathtracker-prod.up.railway.app/auth/login",
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
