@@ -131,25 +131,6 @@ const Login = () => {
         </div>
 
         {/* Fake testimonial */}
-        <div className="relative bg-white border border-slate-200 rounded-2xl p-5 shadow-sm">
-          <p className="text-[13px] text-slate-600 font-light leading-relaxed mb-3">
-            "Gestor completely changed how I manage my study notes. Everything
-            is finally in one place."
-          </p>
-          <div className="flex items-center gap-2.5">
-            <div className="w-7 h-7 rounded-full bg-blue-600 flex items-center justify-center text-white text-[11px] font-bold">
-              AM
-            </div>
-            <div>
-              <p className="text-[12px] font-semibold text-slate-800">
-                Aryan M.
-              </p>
-              <p className="text-[11px] text-slate-400 font-light">
-                Software Engineer
-              </p>
-            </div>
-          </div>
-        </div>
       </div>
 
       {/* ── Right panel — form ── */}
