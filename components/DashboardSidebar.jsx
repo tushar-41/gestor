@@ -135,11 +135,24 @@ export default function DashboardSidebar({ isOpen, onToggle, isMobile }) {
     {
       label: "Reviews",
       icon: (
-        <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+        <svg
+          width="24"
+          height="24"
+          viewBox="0 0 24 24"
+          fill="none"
+          xmlns="http://www.w3.org/2000/svg"
+        >
           <path
-            d="M10.5 1.5L13 6h5l-4 3 1.5 4.5L10 11l-4 2.5 1.5-4.5-4-3h5l2.5-4.5z"
+            d="M21 15a4 4 0 0 1-4 4H8l-5 3V7a4 4 0 0 1 4-4h10a4 4 0 0 1 4 4v8z"
             stroke="currentColor"
-            strokeWidth="1.5"
+            strokeWidth="2"
+            fill="none"
+          />
+
+          <path
+            d="M12 8l1.5 3 3.5.5-2.5 2.5.6 3.5L12 16l-3.1 1.5.6-3.5-2.5-2.5 
+           3.5-.5L12 8z"
+            fill="currentColor"
           />
         </svg>
       ),
@@ -148,12 +161,23 @@ export default function DashboardSidebar({ isOpen, onToggle, isMobile }) {
     {
       label: "Skills",
       icon: (
-        <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+        <svg
+          width="24"
+          height="24"
+          viewBox="0 0 24 24"
+          fill="none"
+          xmlns="http://www.w3.org/2000/svg"
+        >
           <path
-            d="M10 1L13 7H19L14.5 11L16.5 17L10 13L3.5 17L5.5 11L1 7H7L10 1Z"
+            d="M12 2C15 5 16 9 16 12L12 16L8 12C8 9 9 5 12 2Z"
             stroke="currentColor"
-            strokeWidth="1.5"
+            strokeWidth="2"
+            fill="none"
           />
+
+          <circle cx="12" cy="10" r="1.5" fill="currentColor" />
+
+          <path d="M10 18L12 22L14 18" stroke="currentColor" strokeWidth="2" />
         </svg>
       ),
       href: "/dashboard/skills",

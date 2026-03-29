@@ -108,7 +108,10 @@ export default function CreateProjectModal({
   return (
     <div
       className="fixed inset-0 z-50 flex items-center justify-center p-4"
-      style={{ background: "rgba(15,23,42,0.55)", backdropFilter: "blur(6px)" }}
+      style={{
+        background: "rgba(15,23,42,0.55)",
+        backdropFilter: "blur(10px)",
+      }}
     >
       <div
         className="relative w-full max-w-2xl rounded-2xl overflow-hidden"
@@ -122,8 +125,6 @@ export default function CreateProjectModal({
         <div
           style={{
             height: 4,
-            background:
-              "linear-gradient(90deg, #6366f1 0%, #8b5cf6 50%, #a78bfa 100%)",
           }}
         />
 
@@ -650,7 +651,7 @@ export default function CreateProjectModal({
                 background:
                   isSubmitting || !form.name
                     ? "#a5b4fc"
-                    : "linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%)",
+                    : "linear-gradient(135deg, blue 0%, blue 100%)",
                 border: "none",
                 color: "#fff",
                 cursor: isSubmitting || !form.name ? "not-allowed" : "pointer",

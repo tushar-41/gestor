@@ -19,7 +19,12 @@ export default function CreateTopicModal({ onClose, onCreate }) {
     const { name, value } = e.target;
     setForm((prev) => ({
       ...prev,
-      [name]: name === "confidenceLevel" ? parseInt(value) : value === "null" ? null : value,
+      [name]:
+        name === "confidenceLevel"
+          ? parseInt(value)
+          : value === "null"
+            ? null
+            : value,
     }));
   };
 
@@ -128,14 +133,14 @@ export default function CreateTopicModal({ onClose, onCreate }) {
             {/* Confidence Level */}
             <div>
               <label className="block text-[12px] font-semibold text-slate-600 uppercase tracking-wider mb-1.5">
-                Confidence Level (1-10) *
+                Confidence Level (1-5) *
               </label>
               <div className="flex items-center gap-4">
                 <input
                   type="range"
                   name="confidenceLevel"
                   min="1"
-                  max="10"
+                  max="5"
                   value={form.confidenceLevel}
                   onChange={handleChange}
                   className="flex-1 h-2 bg-slate-200 rounded-full appearance-none cursor-pointer"

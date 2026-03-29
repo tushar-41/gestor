@@ -57,7 +57,10 @@ export default function EditTopicModal({ topic, onClose, onUpdate }) {
         </div>
 
         {/* Form */}
-        <form onSubmit={handleSubmit} className="p-6 space-y-4 max-h-[70vh] overflow-y-auto">
+        <form
+          onSubmit={handleSubmit}
+          className="p-6 space-y-4 max-h-[70vh] overflow-y-auto"
+        >
           {/* Topic Name */}
           <div>
             <label className="block text-[12px] font-semibold text-slate-600 uppercase tracking-wider mb-1.5">
@@ -109,14 +112,14 @@ export default function EditTopicModal({ topic, onClose, onUpdate }) {
           {/* Confidence Level */}
           <div>
             <label className="block text-[12px] font-semibold text-slate-600 uppercase tracking-wider mb-1.5">
-              Confidence Level (1-10) *
+              Confidence Level (1-5) *
             </label>
             <div className="flex items-center gap-4">
               <input
                 type="range"
                 name="confidenceLevel"
                 min="1"
-                max="10"
+                max="5"
                 value={form.confidenceLevel}
                 onChange={handleChange}
                 className="flex-1 h-2 bg-slate-200 rounded-full appearance-none cursor-pointer"

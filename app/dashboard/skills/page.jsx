@@ -51,7 +51,9 @@ export default function SkillsPage() {
 
       {skills.length === 0 ? (
         <div className="bg-white border border-slate-200 rounded-2xl p-8 text-center">
-          <p className="text-slate-500">No skills tracked yet. Start learning!</p>
+          <p className="text-slate-500">
+            No skills tracked yet. Start learning!
+          </p>
         </div>
       ) : (
         <div className="space-y-6">
@@ -66,7 +68,10 @@ export default function SkillsPage() {
                     {skill.name}
                   </h3>
                   <p className="text-[13px] text-slate-500">
-                    Level: <span className="font-semibold text-blue-600">{skill.level}</span>
+                    Level:{" "}
+                    <span className="font-semibold text-blue-600">
+                      {skill.level}
+                    </span>
                   </p>
                 </div>
               </div>
@@ -74,7 +79,9 @@ export default function SkillsPage() {
               <div className="space-y-2">
                 <div className="flex items-center justify-between text-[13px] mb-1">
                   <p className="text-slate-600">Progress</p>
-                  <p className="font-semibold text-slate-800">{skill.progress}%</p>
+                  <p className="font-semibold text-slate-800">
+                    {skill.progress}%
+                  </p>
                 </div>
                 <div className="w-full h-2 bg-slate-200 rounded-full overflow-hidden">
                   <div
@@ -90,7 +97,8 @@ export default function SkillsPage() {
                 </p>
                 {skill.masteredDate && (
                   <p className="text-[12px] text-green-600 font-medium">
-                    ✓ Mastered: {new Date(skill.masteredDate).toLocaleDateString()}
+                    ✓ Mastered:{" "}
+                    {new Date(skill.masteredDate).toLocaleDateString()}
                   </p>
                 )}
               </div>

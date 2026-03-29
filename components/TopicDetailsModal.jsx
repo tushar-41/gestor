@@ -58,7 +58,7 @@ export default function TopicDetailsModal({ topic, childTopics, onClose }) {
                 Confidence Level
               </p>
               <p className="text-[24px] font-semibold text-blue-600">
-                {topic.confidenceLevel}/10
+                {topic.confidenceLevel}/5
               </p>
             </div>
 

@@ -153,9 +153,8 @@ export default function ProjectsPage() {
         </div>
         <button
           onClick={() => setIsModalOpen(true)}
-          className="flex items-center gap-2 px-5 py-2.5 rounded-xl text-[14px] font-semibold text-white transition-all"
+          className="flex items-center gap-2 px-5 py-2.5 rounded-xl text-[14px] font-semibold text-white transition-all bg-linear-to-r from-blue-500 to-blue-600 hover:scale-105 active:scale-99"
           style={{
-            background: "linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%)",
             boxShadow: "0 4px 14px rgba(99,102,241,0.35)",
           }}
         >
@@ -244,9 +243,8 @@ export default function ProjectsPage() {
           </p>
           <button
             onClick={() => setIsModalOpen(true)}
-            className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl text-[13px] font-medium text-white transition-all"
+            className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl text-[13px] font-medium text-white transition-all bg-linear-to-r from-blue-500 to-blue-600 hover:scale-105 active:scale-99"
             style={{
-              background: "linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%)",
               boxShadow: "0 4px 14px rgba(99,102,241,0.3)",
             }}
           >

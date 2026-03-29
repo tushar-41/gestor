@@ -28,8 +28,8 @@ export default function TopicCard({ topic, onDelete, onRefresh }) {
   };
 
   const getConfidenceColor = (level) => {
-    if (level >= 8) return "text-green-600";
-    if (level >= 5) return "text-blue-600";
+    if (level >= 4) return "text-green-600";
+    if (level == 3) return "text-blue-600";
     return "text-orange-600";
   };
 
@@ -116,7 +116,7 @@ export default function TopicCard({ topic, onDelete, onRefresh }) {
         <div className="mb-4">
           <span
             className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-[11px] font-semibold ${getDifficultyColor(
-              topic.difficulty
+              topic.difficulty,
             )}`}
           >
             <span className="w-1.5 h-1.5 rounded-full bg-current" />
@@ -132,19 +132,21 @@ export default function TopicCard({ topic, onDelete, onRefresh }) {
               <div className="w-16 h-1.5 bg-slate-200 rounded-full overflow-hidden">
                 <div
                   className={`h-full ${
-                    topic.confidenceLevel >= 8
+                    topic.confidenceLevel >= 4
                       ? "bg-green-600"
-                      : topic.confidenceLevel >= 5
+                      : topic.confidenceLevel == 3
                         ? "bg-blue-600"
                         : "bg-orange-600"
                   } transition-all`}
                   style={{
-                    width: `${(topic.confidenceLevel / 10) * 100}%`,
+                    width: `${(topic.confidenceLevel / 5) * 100}%`,
                   }}
                 />
               </div>
-              <span className={`font-semibold w-5 text-right ${getConfidenceColor(topic.confidenceLevel)}`}>
-                {topic.confidenceLevel}/10
+              <span
+                className={`font-semibold w-5 text-right ${getConfidenceColor(topic.confidenceLevel)}`}
+              >
+                {topic.confidenceLevel}/5
               </span>
             </div>
           </div>
