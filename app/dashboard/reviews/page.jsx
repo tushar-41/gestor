@@ -1,10 +1,26 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import { apiCall } from "@/lib/auth";
 import { toast } from "sonner";
 import RecordReviewModal from "@/components/RecordReviewModal";
 import ReviewHistoryModal from "@/components/ReviewHistoryModal";
+import {
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  ResponsiveContainer,
+  LineChart,
+  Line,
+  AreaChart,
+  Area,
+  PieChart,
+  Pie,
+  Cell,
+} from "recharts";
 
 /* ─── helpers ─────────────────────────────────────────────── */
 function fmt(dateStr) {
@@ -120,6 +136,186 @@ export default function ReviewsPage() {
 
   const dueTopicObjects = topics.filter((t) => dueTopics.includes(t.id));
 
+  // ── At-risk computation ───────────────────────────────────────
+  // Groups reviews by topicId, then scores each topic for risk signals:
+  //   OVERDUE  – nextReviewDate is in the past (most urgent)
+  //   LOW_RATING – latest review rating <= 2
+  //   STALE    – last reviewed > 14 days ago with no upcoming review date
+  //   NEVER    – topic exists in topics list but has no review at all
+  const atRiskTopics = (() => {
+    const todayMs = Date.now();
+    const STALE_THRESHOLD_DAYS = 14;
+
+    // Build a map: topicId → { latestReview, allReviews }
+    const byTopic = {};
+    reviews.forEach((r) => {
+      if (!byTopic[r.topicId])
+        byTopic[r.topicId] = { latestReview: r, allReviews: [] };
+      byTopic[r.topicId].allReviews.push(r);
+      // keep the most recent
+      if (
+        new Date(r.reviewedAt) >
+        new Date(byTopic[r.topicId].latestReview.reviewedAt)
+      ) {
+        byTopic[r.topicId].latestReview = r;
+      }
+    });
+
+    const atRisk = [];
+
+    // Check reviewed topics for risk signals
+    Object.entries(byTopic).forEach(
+      ([topicIdStr, { latestReview, allReviews }]) => {
+        const topicId = Number(topicIdStr);
+        const topic = topics.find((t) => t.id === topicId) || {
+          id: topicId,
+          name: latestReview.topicName,
+        };
+        const reasons = [];
+        let severity = 0; // higher = more urgent
+
+        // Signal 1: Overdue (nextReviewDate is in the past)
+        if (latestReview.nextReviewDate) {
+          const nextMs = new Date(latestReview.nextReviewDate).getTime();
+          const overdueDays = Math.floor((todayMs - nextMs) / 86400000);
+          if (overdueDays > 0) {
+            reasons.push({
+              type: "OVERDUE",
+              label: `${overdueDays}d overdue`,
+              days: overdueDays,
+            });
+            severity += 30 + overdueDays;
+          }
+        }
+
+        // Signal 2: Low rating on latest review
+        if (latestReview.rating <= 2) {
+          reasons.push({
+            type: "LOW_RATING",
+            label: `Last rated ${latestReview.rating}/5`,
+            rating: latestReview.rating,
+          });
+          severity += 20;
+        }
+
+        // Signal 3: Stale — last reviewed > STALE_THRESHOLD_DAYS ago
+        const daysSinceReview = Math.floor(
+          (todayMs - new Date(latestReview.reviewedAt).getTime()) / 86400000,
+        );
+        if (daysSinceReview > STALE_THRESHOLD_DAYS) {
+          reasons.push({
+            type: "STALE",
+            label: `${daysSinceReview}d since last review`,
+            days: daysSinceReview,
+          });
+          severity += 10 + daysSinceReview;
+        }
+
+        if (reasons.length > 0) {
+          atRisk.push({
+            topic,
+            latestReview,
+            reasons,
+            severity,
+            daysSinceReview,
+          });
+        }
+      },
+    );
+
+    // Signal 4: Topics that have never been reviewed
+    topics.forEach((t) => {
+      if (!byTopic[t.id]) {
+        atRisk.push({
+          topic: t,
+          latestReview: null,
+          reasons: [{ type: "NEVER", label: "Never reviewed" }],
+          severity: 5,
+          daysSinceReview: Infinity,
+        });
+      }
+    });
+
+    // Sort by severity descending (most urgent first)
+    return atRisk.sort((a, b) => b.severity - a.severity);
+  })();
+
+  // ── Chart data derivations ────────────────────────────────────
+
+  // 1. Reviews per day over last 30 days
+  const reviewsOverTime = useMemo(() => {
+    const buckets = {};
+    const now = Date.now();
+    for (let i = 29; i >= 0; i--) {
+      const d = new Date(now - i * 86400000);
+      const key = d.toLocaleDateString("en-US", {
+        month: "short",
+        day: "numeric",
+      });
+      buckets[key] = 0;
+    }
+    reviews.forEach((r) => {
+      const key = new Date(r.reviewedAt).toLocaleDateString("en-US", {
+        month: "short",
+        day: "numeric",
+      });
+      if (key in buckets) buckets[key]++;
+    });
+    // Only show every 5th label to avoid clutter
+    return Object.entries(buckets).map(([date, count], i) => ({
+      date: i % 5 === 0 ? date : "",
+      fullDate: date,
+      count,
+    }));
+  }, [reviews]);
+
+  // 2. Total time spent per topic (top 8)
+  const timePerTopic = useMemo(() => {
+    const map = {};
+    reviews.forEach((r) => {
+      if (!map[r.topicName]) map[r.topicName] = 0;
+      map[r.topicName] += r.timeSpentMinutes || 0;
+    });
+    return Object.entries(map)
+      .map(([name, minutes]) => ({
+        name: name.length > 10 ? name.slice(0, 10) + "…" : name,
+        fullName: name,
+        minutes,
+      }))
+      .sort((a, b) => b.minutes - a.minutes)
+      .slice(0, 8);
+  }, [reviews]);
+
+  // 3. Rating distribution (1–5 stars)
+  const ratingDist = useMemo(() => {
+    const counts = { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 };
+    reviews.forEach((r) => {
+      if (r.rating >= 1 && r.rating <= 5) counts[r.rating]++;
+    });
+    return [1, 2, 3, 4, 5].map((star) => ({
+      star,
+      label: "★".repeat(star),
+      count: counts[star],
+    }));
+  }, [reviews]);
+
+  // 4. Average rating per topic (top 7)
+  const avgRatingPerTopic = useMemo(() => {
+    const map = {};
+    reviews.forEach((r) => {
+      if (!map[r.topicName]) map[r.topicName] = { sum: 0, count: 0 };
+      map[r.topicName].sum += r.rating;
+      map[r.topicName].count++;
+    });
+    return Object.entries(map)
+      .map(([name, { sum, count }]) => ({
+        name: name.length > 12 ? name.slice(0, 12) + "…" : name,
+        avg: parseFloat((sum / count).toFixed(2)),
+      }))
+      .sort((a, b) => a.avg - b.avg)
+      .slice(0, 7);
+  }, [reviews]);
+
   if (isLoading) return <PageLoader />;
 
   return (
@@ -172,14 +368,14 @@ export default function ReviewsPage() {
         </button>
       </div>
 
-      {/* ── Stats ── */}
+      {/* ── Stats overview numbers ── */}
       {stats && (
         <div
           style={{
             display: "grid",
-            gridTemplateColumns: "repeat(auto-fill, minmax(160px, 1fr))",
-            gap: 12,
-            marginBottom: 28,
+            gridTemplateColumns: "repeat(auto-fill, minmax(150px, 1fr))",
+            gap: 10,
+            marginBottom: 20,
           }}
         >
           <StatCard
@@ -208,10 +404,220 @@ export default function ReviewsPage() {
             icon={clockIcon}
           />
           <StatCard
-            label="Avg per Review"
+            label="Avg / Review"
             value={`${stats.averageTimePerReview}m`}
             icon={avgIcon}
           />
+        </div>
+      )}
+
+      {/* ── Charts ── */}
+      {reviews.length > 0 && (
+        <div
+          style={{
+            display: "grid",
+            gridTemplateColumns: "1fr 1fr",
+            gap: 16,
+            marginBottom: 28,
+          }}
+        >
+          {/* Chart 1 — Reviews over time (area) */}
+          <ChartCard
+            title="Reviews Over Time"
+            sub="Daily session count (last 30 days)"
+          >
+            <ResponsiveContainer width="100%" height={200}>
+              <AreaChart
+                data={reviewsOverTime}
+                margin={{ top: 8, right: 8, left: -20, bottom: 0 }}
+              >
+                <defs>
+                  <linearGradient id="blueGrad" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="5%" stopColor="#3b82f6" stopOpacity={0.25} />
+                    <stop offset="95%" stopColor="#3b82f6" stopOpacity={0} />
+                  </linearGradient>
+                </defs>
+                <CartesianGrid
+                  strokeDasharray="3 3"
+                  stroke="#f1f5f9"
+                  vertical={false}
+                />
+                <XAxis
+                  dataKey="date"
+                  tick={{ fontSize: 10, fill: "#94a3b8" }}
+                  tickLine={false}
+                  axisLine={false}
+                />
+                <YAxis
+                  allowDecimals={false}
+                  tick={{ fontSize: 10, fill: "#94a3b8" }}
+                  tickLine={false}
+                  axisLine={false}
+                />
+                <Tooltip
+                  contentStyle={tooltipStyle}
+                  labelStyle={{ color: "#1e293b", fontWeight: 700 }}
+                  itemStyle={{ color: "#3b82f6" }}
+                />
+                <Area
+                  type="monotone"
+                  dataKey="count"
+                  stroke="#3b82f6"
+                  strokeWidth={2.5}
+                  fill="url(#blueGrad)"
+                  dot={false}
+                  activeDot={{ r: 4, fill: "#1d4ed8" }}
+                />
+              </AreaChart>
+            </ResponsiveContainer>
+          </ChartCard>
+
+          {/* Chart 2 — Time spent per topic (bar) */}
+          <ChartCard title="Time Spent per Topic" sub="Total minutes by topic">
+            <ResponsiveContainer width="100%" height={200}>
+              <BarChart
+                data={timePerTopic}
+                margin={{ top: 8, right: 8, left: -20, bottom: 0 }}
+                barSize={22}
+              >
+                <CartesianGrid
+                  strokeDasharray="3 3"
+                  stroke="#f1f5f9"
+                  vertical={false}
+                />
+                <XAxis
+                  dataKey="name"
+                  tick={{ fontSize: 10, fill: "#94a3b8" }}
+                  tickLine={false}
+                  axisLine={false}
+                />
+                <YAxis
+                  allowDecimals={false}
+                  tick={{ fontSize: 10, fill: "#94a3b8" }}
+                  tickLine={false}
+                  axisLine={false}
+                />
+                <Tooltip
+                  contentStyle={tooltipStyle}
+                  labelStyle={{ color: "#1e293b", fontWeight: 700 }}
+                  itemStyle={{ color: "#3b82f6" }}
+                  formatter={(v) => [`${v}m`, "Time"]}
+                />
+                <Bar dataKey="minutes" radius={[6, 6, 0, 0]}>
+                  {timePerTopic.map((_, i) => (
+                    <Cell key={i} fill={i % 2 === 0 ? "#3b82f6" : "#60a5fa"} />
+                  ))}
+                </Bar>
+              </BarChart>
+            </ResponsiveContainer>
+          </ChartCard>
+
+          {/* Chart 3 — Rating distribution (bar) */}
+          <ChartCard
+            title="Rating Distribution"
+            sub="How often each star rating appears"
+          >
+            <ResponsiveContainer width="100%" height={200}>
+              <BarChart
+                data={ratingDist}
+                margin={{ top: 8, right: 8, left: -20, bottom: 0 }}
+                barSize={32}
+              >
+                <CartesianGrid
+                  strokeDasharray="3 3"
+                  stroke="#f1f5f9"
+                  vertical={false}
+                />
+                <XAxis
+                  dataKey="label"
+                  tick={{ fontSize: 11, fill: "#94a3b8" }}
+                  tickLine={false}
+                  axisLine={false}
+                />
+                <YAxis
+                  allowDecimals={false}
+                  tick={{ fontSize: 10, fill: "#94a3b8" }}
+                  tickLine={false}
+                  axisLine={false}
+                />
+                <Tooltip
+                  contentStyle={tooltipStyle}
+                  labelStyle={{ color: "#1e293b", fontWeight: 700 }}
+                  itemStyle={{ color: "#3b82f6" }}
+                  formatter={(v) => [v, "Reviews"]}
+                />
+                <Bar dataKey="count" radius={[6, 6, 0, 0]}>
+                  {ratingDist.map((entry) => (
+                    <Cell
+                      key={entry.label}
+                      fill={
+                        entry.count > 0
+                          ? `hsl(${200 + entry.star * 12},80%,${60 - entry.star * 4}%)`
+                          : "#e2e8f0"
+                      }
+                    />
+                  ))}
+                </Bar>
+              </BarChart>
+            </ResponsiveContainer>
+          </ChartCard>
+
+          {/* Chart 4 — Avg rating per topic (horizontal bar) */}
+          <ChartCard
+            title="Avg Rating by Topic"
+            sub="Average star rating across all sessions"
+          >
+            <ResponsiveContainer width="100%" height={200}>
+              <BarChart
+                data={avgRatingPerTopic}
+                layout="vertical"
+                margin={{ top: 8, right: 16, left: 4, bottom: 0 }}
+                barSize={14}
+              >
+                <CartesianGrid
+                  strokeDasharray="3 3"
+                  stroke="#f1f5f9"
+                  horizontal={false}
+                />
+                <XAxis
+                  type="number"
+                  domain={[0, 5]}
+                  tick={{ fontSize: 10, fill: "#94a3b8" }}
+                  tickLine={false}
+                  axisLine={false}
+                  ticks={[0, 1, 2, 3, 4, 5]}
+                />
+                <YAxis
+                  type="category"
+                  dataKey="name"
+                  tick={{ fontSize: 10, fill: "#64748b" }}
+                  tickLine={false}
+                  axisLine={false}
+                  width={72}
+                />
+                <Tooltip
+                  contentStyle={tooltipStyle}
+                  labelStyle={{ color: "#1e293b", fontWeight: 700 }}
+                  itemStyle={{ color: "#3b82f6" }}
+                  formatter={(v) => [`${v.toFixed(1)} / 5`, "Avg Rating"]}
+                />
+                <Bar dataKey="avg" radius={[0, 6, 6, 0]}>
+                  {avgRatingPerTopic.map((entry, i) => (
+                    <Cell
+                      key={i}
+                      fill={
+                        entry.avg >= 4
+                          ? "#1d4ed8"
+                          : entry.avg >= 3
+                            ? "#3b82f6"
+                            : "#93c5fd"
+                      }
+                    />
+                  ))}
+                </Bar>
+              </BarChart>
+            </ResponsiveContainer>
+          </ChartCard>
         </div>
       )}
 
@@ -251,6 +657,44 @@ export default function ReviewsPage() {
                     }}
                   />
                 ))}
+          </div>
+        </section>
+      )}
+
+      {/* ── At-Risk Topics ── */}
+      {atRiskTopics.length > 0 && (
+        <section style={{ marginBottom: 28 }}>
+          <SectionHeader
+            title="Topics at Risk"
+            count={atRiskTopics.length}
+            risk
+          />
+          <div
+            style={{
+              display: "grid",
+              gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))",
+              gap: 10,
+            }}
+          >
+            {atRiskTopics.map(
+              ({ topic, latestReview, reasons, severity, daysSinceReview }) => (
+                <AtRiskCard
+                  key={topic.id}
+                  topic={topic}
+                  latestReview={latestReview}
+                  reasons={reasons}
+                  severity={severity}
+                  daysSinceReview={daysSinceReview}
+                  onRecord={() =>
+                    setRecordOpen({ topicId: topic.id, topicName: topic.name })
+                  }
+                  onHistory={() => {
+                    setHistoryTopicId(topic.id);
+                    setHistoryTopicName(topic.name);
+                  }}
+                />
+              ),
+            )}
           </div>
         </section>
       )}
@@ -403,7 +847,49 @@ export default function ReviewsPage() {
   );
 }
 
+/* ─── chart tooltip style ────────────────────────────────────── */
+const tooltipStyle = {
+  background: "#fff",
+  border: "1.5px solid #dbeafe",
+  borderRadius: 10,
+  boxShadow: "0 4px 16px rgba(59,130,246,0.12)",
+  fontSize: 12,
+  fontFamily: "inherit",
+  padding: "8px 12px",
+};
+
 /* ─── sub-components ──────────────────────────────────────── */
+
+function ChartCard({ title, sub, children }) {
+  return (
+    <div
+      style={{
+        background: "#fff",
+        border: "1.5px solid #e2e8f0",
+        borderRadius: 16,
+        padding: "18px 20px",
+      }}
+    >
+      <div style={{ marginBottom: 14 }}>
+        <p
+          style={{
+            fontSize: 13,
+            fontWeight: 700,
+            color: "#1e293b",
+            letterSpacing: "-0.2px",
+          }}
+        >
+          {title}
+        </p>
+        {sub && (
+          <p style={{ fontSize: 11, color: "#94a3b8", marginTop: 2 }}>{sub}</p>
+        )}
+      </div>
+      {children}
+    </div>
+  );
+}
+
 function StatCard({ label, value, icon }) {
   return (
     <div
@@ -554,7 +1040,220 @@ function ReviewRow({ review, onHistory }) {
   );
 }
 
-function SectionHeader({ title, count, urgent }) {
+function AtRiskCard({
+  topic,
+  latestReview,
+  reasons,
+  severity,
+  daysSinceReview,
+  onRecord,
+  onHistory,
+}) {
+  // Determine urgency tier from severity score
+  const isUrgent = severity >= 40;
+  const isMedium = severity >= 15 && severity < 40;
+  const urgencyStyle = isUrgent
+    ? {
+        border: "1.5px solid #93c5fd",
+        bg: "#eff6ff",
+        badge: "#1d4ed8",
+        badgeBg: "#dbeafe",
+        dot: "#2563eb",
+      }
+    : isMedium
+      ? {
+          border: "1.5px solid #bfdbfe",
+          bg: "#f0f9ff",
+          badge: "#1e40af",
+          badgeBg: "#dbeafe",
+          dot: "#3b82f6",
+        }
+      : {
+          border: "1.5px solid #e2e8f0",
+          bg: "#f8fafc",
+          badge: "#64748b",
+          badgeBg: "#f1f5f9",
+          dot: "#94a3b8",
+        };
+
+  const REASON_META = {
+    OVERDUE: { icon: "⏰", color: "#1d4ed8", bg: "#dbeafe" },
+    LOW_RATING: { icon: "⚠️", color: "#1e40af", bg: "#eff6ff" },
+    STALE: { icon: "🕐", color: "#2563eb", bg: "#dbeafe" },
+    NEVER: { icon: "📭", color: "#64748b", bg: "#f1f5f9" },
+  };
+
+  return (
+    <div
+      style={{
+        background: urgencyStyle.bg,
+        border: urgencyStyle.border,
+        borderRadius: 14,
+        padding: "14px 16px",
+        position: "relative",
+        overflow: "hidden",
+      }}
+    >
+      {/* Urgency left bar */}
+      <div
+        style={{
+          position: "absolute",
+          left: 0,
+          top: 0,
+          bottom: 0,
+          width: 3,
+          background: isUrgent
+            ? "linear-gradient(180deg,#1d4ed8,#3b82f6)"
+            : isMedium
+              ? "linear-gradient(180deg,#3b82f6,#93c5fd)"
+              : "#e2e8f0",
+          borderRadius: "0 2px 2px 0",
+        }}
+      />
+
+      <div style={{ paddingLeft: 6 }}>
+        {/* Topic name + urgency dot */}
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-between",
+            marginBottom: 8,
+          }}
+        >
+          <div style={{ display: "flex", alignItems: "center", gap: 7 }}>
+            <span
+              style={{
+                width: 8,
+                height: 8,
+                borderRadius: "50%",
+                background: urgencyStyle.dot,
+                flexShrink: 0,
+              }}
+            />
+            <span style={{ fontSize: 14, fontWeight: 700, color: "#1e293b" }}>
+              {topic.name}
+            </span>
+          </div>
+          {latestReview && (
+            <StarRating rating={latestReview.rating} size={12} />
+          )}
+        </div>
+
+        {/* Reason tags */}
+        <div
+          style={{
+            display: "flex",
+            gap: 5,
+            flexWrap: "wrap",
+            marginBottom: 10,
+          }}
+        >
+          {reasons.map((r) => {
+            const meta = REASON_META[r.type] || REASON_META.STALE;
+            return (
+              <span
+                key={r.type}
+                style={{
+                  display: "inline-flex",
+                  alignItems: "center",
+                  gap: 4,
+                  padding: "3px 9px",
+                  borderRadius: 20,
+                  background: meta.bg,
+                  color: meta.color,
+                  fontSize: 11,
+                  fontWeight: 600,
+                }}
+              >
+                <span style={{ fontSize: 10 }}>{meta.icon}</span>
+                {r.label}
+              </span>
+            );
+          })}
+        </div>
+
+        {/* Last review info */}
+        {latestReview ? (
+          <p style={{ fontSize: 11, color: "#64748b", marginBottom: 10 }}>
+            Last reviewed {timeAgo(latestReview.reviewedAt)}
+            {latestReview.nextReviewDate && (
+              <span style={{ color: "#3b82f6", fontWeight: 600 }}>
+                {" · "}Next was {fmt(latestReview.nextReviewDate)}
+              </span>
+            )}
+          </p>
+        ) : (
+          <p style={{ fontSize: 11, color: "#94a3b8", marginBottom: 10 }}>
+            No review history
+          </p>
+        )}
+
+        {/* Actions */}
+        <div style={{ display: "flex", gap: 7 }}>
+          <button
+            onClick={onRecord}
+            style={{
+              flex: 1,
+              padding: "7px 0",
+              borderRadius: 9,
+              fontSize: 12,
+              fontWeight: 600,
+              background: "linear-gradient(135deg,#3b82f6,#1d4ed8)",
+              border: "none",
+              color: "#fff",
+              cursor: "pointer",
+              boxShadow: "0 2px 8px rgba(59,130,246,0.3)",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              gap: 5,
+            }}
+          >
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none">
+              <path
+                d="M9 11l3 3L22 4"
+                stroke="currentColor"
+                strokeWidth="2.2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+            </svg>
+            Review Now
+          </button>
+          <button
+            onClick={onHistory}
+            style={{
+              padding: "7px 12px",
+              borderRadius: 9,
+              fontSize: 12,
+              fontWeight: 600,
+              background: "#fff",
+              border: "1.5px solid #bfdbfe",
+              color: "#1d4ed8",
+              cursor: "pointer",
+              display: "flex",
+              alignItems: "center",
+              gap: 4,
+            }}
+          >
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none">
+              <path
+                d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+              />
+            </svg>
+            History
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function SectionHeader({ title, count, urgent, risk }) {
   return (
     <div
       style={{
@@ -574,6 +1273,45 @@ function SectionHeader({ title, count, urgent }) {
           }}
         />
       )}
+      {risk && (
+        <span
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            width: 22,
+            height: 22,
+            borderRadius: 6,
+            background: "#dbeafe",
+          }}
+        >
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none">
+            <path
+              d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"
+              stroke="#1d4ed8"
+              strokeWidth="2"
+            />
+            <line
+              x1="12"
+              y1="9"
+              x2="12"
+              y2="13"
+              stroke="#1d4ed8"
+              strokeWidth="2"
+              strokeLinecap="round"
+            />
+            <line
+              x1="12"
+              y1="17"
+              x2="12.01"
+              y2="17"
+              stroke="#1d4ed8"
+              strokeWidth="2"
+              strokeLinecap="round"
+            />
+          </svg>
+        </span>
+      )}
       <h2
         style={{
           fontSize: 15,
@@ -589,8 +1327,8 @@ function SectionHeader({ title, count, urgent }) {
           style={{
             padding: "2px 9px",
             borderRadius: 20,
-            background: "#dbeafe",
-            color: "#1d4ed8",
+            background: risk ? "#dbeafe" : "#dbeafe",
+            color: risk ? "#1d4ed8" : "#1d4ed8",
             fontSize: 11,
             fontWeight: 700,
           }}
