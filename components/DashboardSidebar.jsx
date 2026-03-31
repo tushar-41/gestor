@@ -154,7 +154,6 @@ export default function DashboardSidebar({ isOpen, onToggle, isMobile }) {
         </svg>
       ),
       href: "/dashboard/skills",
-      disabled: true,
     },
   ];
 
