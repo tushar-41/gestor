@@ -20,8 +20,6 @@ export default function DashboardSidebar({ isOpen, onToggle, isMobile }) {
     try {
       const response = await apiCall("/current_user");
       if (response) {
-        // The response is plain text like "test11 2" (username id)
-        // Parse it to extract username
         const userInfo =
           typeof response === "string"
             ? response.split(" ")[0]
@@ -70,27 +68,6 @@ export default function DashboardSidebar({ isOpen, onToggle, isMobile }) {
       href: "/dashboard/topics",
     },
     {
-      label: "Learning Path",
-      icon: (
-        <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-          <path
-            d="M10 3v14M3 10h14"
-            stroke="currentColor"
-            strokeWidth="1.5"
-            strokeLinecap="round"
-          />
-          <circle
-            cx="10"
-            cy="10"
-            r="7"
-            stroke="currentColor"
-            strokeWidth="1.5"
-          />
-        </svg>
-      ),
-      href: "/dashboard/learning-path",
-    },
-    {
       label: "Notes",
       icon: (
         <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
@@ -113,17 +90,28 @@ export default function DashboardSidebar({ isOpen, onToggle, isMobile }) {
       label: "Projects",
       icon: (
         <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-          <rect
-            x="2"
-            y="4"
-            width="16"
-            height="12"
-            rx="1"
+          <path
+            d="M3 4C3 3.44772 3.44772 3 4 3H16C16.5523 3 17 3.44772 17 4V6H3V4Z"
             stroke="currentColor"
             strokeWidth="1.5"
+            strokeLinecap="round"
+            strokeLinejoin="round"
           />
           <path
-            d="M5 9h10"
+            d="M3 6H17V15C17 15.5523 16.5523 16 16 16H4C3.44772 16 3 15.5523 3 15V6Z"
+            stroke="currentColor"
+            strokeWidth="1.5"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          />
+          <path
+            d="M6 3V2C6 1.44772 6.44772 1 7 1C7.55228 1 8 1.44772 8 2V3"
+            stroke="currentColor"
+            strokeWidth="1.5"
+            strokeLinecap="round"
+          />
+          <path
+            d="M12 3V2C12 1.44772 12.4477 1 13 1C13.5523 1 14 1.44772 14 2V3"
             stroke="currentColor"
             strokeWidth="1.5"
             strokeLinecap="round"
@@ -135,25 +123,15 @@ export default function DashboardSidebar({ isOpen, onToggle, isMobile }) {
     {
       label: "Reviews",
       icon: (
-        <svg
-          width="24"
-          height="24"
-          viewBox="0 0 24 24"
-          fill="none"
-          xmlns="http://www.w3.org/2000/svg"
-        >
+        <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
           <path
-            d="M21 15a4 4 0 0 1-4 4H8l-5 3V7a4 4 0 0 1 4-4h10a4 4 0 0 1 4 4v8z"
+            d="M3 10Q10 3 17 10Q10 17 3 10Z"
             stroke="currentColor"
-            strokeWidth="2"
-            fill="none"
+            strokeWidth="1.5"
+            strokeLinecap="round"
+            strokeLinejoin="round"
           />
-
-          <path
-            d="M12 8l1.5 3 3.5.5-2.5 2.5.6 3.5L12 16l-3.1 1.5.6-3.5-2.5-2.5 
-           3.5-.5L12 8z"
-            fill="currentColor"
-          />
+          <circle cx="10" cy="10" r="2.5" fill="currentColor" />
         </svg>
       ),
       href: "/dashboard/reviews",
@@ -161,33 +139,27 @@ export default function DashboardSidebar({ isOpen, onToggle, isMobile }) {
     {
       label: "Skills",
       icon: (
-        <svg
-          width="24"
-          height="24"
-          viewBox="0 0 24 24"
-          fill="none"
-          xmlns="http://www.w3.org/2000/svg"
-        >
-          <path
-            d="M12 2C15 5 16 9 16 12L12 16L8 12C8 9 9 5 12 2Z"
-            stroke="currentColor"
-            strokeWidth="2"
-            fill="none"
-          />
-
-          <circle cx="12" cy="10" r="1.5" fill="currentColor" />
-
-          <path d="M10 18L12 22L14 18" stroke="currentColor" strokeWidth="2" />
+        <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+          <g fill="currentColor">
+            <circle cx="10" cy="10" r="2.2" />
+            <circle cx="10" cy="5.5" r="1.8" />
+            <circle cx="10" cy="14.5" r="1.8" />
+            <circle cx="5.5" cy="10" r="1.8" />
+            <circle cx="14.5" cy="10" r="1.8" />
+            <circle cx="6.8" cy="6.8" r="1.8" />
+            <circle cx="13.2" cy="6.8" r="1.8" />
+            <circle cx="6.8" cy="13.2" r="1.8" />
+            <circle cx="13.2" cy="13.2" r="1.8" />
+          </g>
         </svg>
       ),
       href: "/dashboard/skills",
+      disabled: true,
     },
   ];
 
   const isActive = (href) => {
-    if (href === "/dashboard") {
-      return pathname === "/dashboard";
-    }
+    if (href === "/dashboard") return pathname === "/dashboard";
     return pathname.startsWith(href);
   };
 
@@ -195,9 +167,7 @@ export default function DashboardSidebar({ isOpen, onToggle, isMobile }) {
     <>
       {/* Desktop Sidebar */}
       <aside
-        className={`hidden lg:flex bg-white border-r border-slate-200 flex-col h-screen sticky top-16 transition-all duration-300 ${
-          isOpen ? "w-64" : "w-20"
-        }`}
+        className={`hidden lg:flex bg-white border-r border-slate-200 flex-col h-screen sticky top-16 transition-all duration-300 ${isOpen ? "w-64" : "w-20"}`}
       >
         {/* Sidebar Header with Toggle */}
         <div
@@ -270,11 +240,26 @@ export default function DashboardSidebar({ isOpen, onToggle, isMobile }) {
           </button>
         </div>
 
-        {/* Navigation */}
+        {/* Expanded Navigation */}
         {isOpen && (
           <nav className="flex-1 px-4 py-6 space-y-2 overflow-y-auto">
             {menuItems.map((item) => {
               const active = isActive(item.href);
+              if (item.disabled) {
+                return (
+                  <div
+                    key={item.href}
+                    title="Coming soon"
+                    className="flex items-center gap-3 px-4 py-3 rounded-lg text-[14px] font-medium cursor-not-allowed select-none opacity-35"
+                  >
+                    <span className="text-slate-400">{item.icon}</span>
+                    <span className="text-slate-500">{item.label}</span>
+                    <span className="ml-auto text-[10px] font-semibold text-slate-400 bg-slate-100 px-1.5 py-0.5 rounded-md tracking-wide">
+                      Soon
+                    </span>
+                  </div>
+                );
+              }
               return (
                 <Link
                   key={item.href}
@@ -301,11 +286,22 @@ export default function DashboardSidebar({ isOpen, onToggle, isMobile }) {
           </nav>
         )}
 
-        {/* Collapsed Navigation - Icon only */}
+        {/* Collapsed Navigation — icon only */}
         {!isOpen && (
           <nav className="flex-1 px-3 py-6 space-y-3 overflow-y-auto flex flex-col items-center">
             {menuItems.map((item) => {
               const active = isActive(item.href);
+              if (item.disabled) {
+                return (
+                  <div
+                    key={item.href}
+                    title="Coming soon"
+                    className="flex items-center justify-center w-10 h-10 rounded-lg cursor-not-allowed select-none opacity-35 text-slate-400"
+                  >
+                    {item.icon}
+                  </div>
+                );
+              }
               return (
                 <Link
                   key={item.href}
@@ -353,15 +349,12 @@ export default function DashboardSidebar({ isOpen, onToggle, isMobile }) {
       {/* Mobile Sidebar */}
       {isOpen && (
         <>
-          {/* Overlay */}
           <div
             className="lg:hidden fixed inset-0 bg-black/40 z-40"
             onClick={onToggle}
           />
-
-          {/* Mobile Sidebar Content */}
           <aside className="lg:hidden fixed left-0 top-0 w-64 h-full bg-white border-r border-slate-200 flex flex-col z-50 overflow-y-auto">
-            {/* Logo Header with Close Button */}
+            {/* Logo Header */}
             <div className="p-6 border-b border-slate-200 flex items-center justify-between sticky top-0 bg-white">
               <Link href="/dashboard" className="flex items-center gap-2 group">
                 <div className="w-8 h-8 rounded-lg bg-blue-600 flex items-center justify-center group-hover:bg-blue-700 transition-colors">
@@ -426,6 +419,21 @@ export default function DashboardSidebar({ isOpen, onToggle, isMobile }) {
             <nav className="flex-1 px-4 py-6 space-y-2">
               {menuItems.map((item) => {
                 const active = isActive(item.href);
+                if (item.disabled) {
+                  return (
+                    <div
+                      key={item.href}
+                      title="Coming soon"
+                      className="flex items-center gap-3 px-4 py-3 rounded-lg text-[14px] font-medium cursor-not-allowed select-none opacity-35"
+                    >
+                      <span className="text-slate-400">{item.icon}</span>
+                      <span className="text-slate-500">{item.label}</span>
+                      <span className="ml-auto text-[10px] font-semibold text-slate-400 bg-slate-100 px-1.5 py-0.5 rounded-md tracking-wide">
+                        Soon
+                      </span>
+                    </div>
+                  );
+                }
                 return (
                   <Link
                     key={item.href}
@@ -445,26 +453,6 @@ export default function DashboardSidebar({ isOpen, onToggle, isMobile }) {
                 );
               })}
             </nav>
-
-            {/* Footer */}
-            <div className="p-4 border-t border-slate-200 space-y-2">
-              <button
-                onClick={handleLogout}
-                disabled={isLoggingOut}
-                className="w-full flex items-center gap-3 px-4 py-3 rounded-lg text-[14px] font-medium text-slate-600 hover:bg-red-50 hover:text-red-600 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
-              >
-                <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-                  <path
-                    d="M13 6l4 4m0 0l-4 4m4-4H7m0 0a4 4 0 01-4-4V5"
-                    stroke="currentColor"
-                    strokeWidth="1.5"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  />
-                </svg>
-                {isLoggingOut ? "Logging out..." : "Logout"}
-              </button>
-            </div>
           </aside>
         </>
       )}

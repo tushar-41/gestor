@@ -113,10 +113,10 @@ const Signup = () => {
               className="text-[28px] font-semibold text-slate-900 tracking-tight leading-tight mb-1.5"
               style={{ fontFamily: "'Playfair Display', Georgia, serif" }}
             >
-              Create your account
+              Start your learning journey
             </h1>
             <p className="text-[14px] text-slate-400 font-light">
-              Start capturing ideas and tracking progress today.
+              Master skills, track progress, and accelerate your growth.
             </p>
           </div>
 
@@ -263,25 +263,25 @@ const Signup = () => {
             className="text-[30px] font-semibold text-slate-900 leading-tight tracking-tight mb-6"
             style={{ fontFamily: "'Playfair Display', Georgia, serif" }}
           >
-            Your second brain,
+            Organize learning.
             <br />
-            finally organized.
+            Master skills.
           </p>
           {[
             {
-              icon: "📋",
-              title: "Capture anything",
-              desc: "Notes, tasks, ideas — all in one workspace.",
+              icon: "📚",
+              title: "Track Topics",
+              desc: "Organize your learning into structured topics and categories.",
             },
             {
-              icon: "✅",
-              title: "Track your progress",
-              desc: "Turn notes into tasks and follow through.",
+              icon: "⭐",
+              title: "Monitor Skills",
+              desc: "Watch your skills evolve from beginner to expert level.",
             },
             {
-              icon: "🔍",
-              title: "Find it instantly",
-              desc: "Full-text search across everything you've saved.",
+              icon: "📈",
+              title: "Visualize Progress",
+              desc: "See your growth with streaks, analytics, and insights.",
             },
           ].map((f, i) => (
             <div key={i} className="flex items-start gap-3">
@@ -301,9 +301,9 @@ const Signup = () => {
         {/* Social proof numbers */}
         <div className="relative flex gap-8">
           {[
-            { value: "10k+", label: "Active users" },
-            { value: "500k+", label: "Notes created" },
-            { value: "4.9★", label: "User rating" },
+            { value: "5k+", label: "Active learners" },
+            { value: "50k+", label: "Topics tracked" },
+            { value: "100k+", label: "Skills mastered" },
           ].map((s, i) => (
             <div key={i}>
               <p

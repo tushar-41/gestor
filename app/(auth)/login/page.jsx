@@ -120,13 +120,13 @@ const Login = () => {
             className="text-[32px] font-semibold text-slate-900 leading-tight tracking-tight mb-4"
             style={{ fontFamily: "'Playfair Display', Georgia, serif" }}
           >
-            Every great idea
+            Master your skills.
             <br />
-            starts with a note.
+            Track your progress.
           </p>
           <p className="text-[14px] text-slate-500 font-light leading-relaxed max-w-xs">
-            Capture your thoughts, track your tasks, and stay on top of
-            everything that matters — all in one place.
+            Organize topics, manage projects, track skill evolution, and
+            accelerate your learning journey with spaced repetition.
           </p>
         </div>
 
@@ -184,7 +184,7 @@ const Login = () => {
               Welcome back
             </h1>
             <p className="text-[14px] text-slate-400 font-light">
-              Sign in to continue to your workspace.
+              Continue learning and mastering your skills.
             </p>
           </div>
 

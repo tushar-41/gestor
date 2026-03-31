@@ -4,16 +4,16 @@ const ALL_FEATURES = [
     icon: (
       <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
         <path
-          d="M4 6h12M4 10h8M4 14h10"
+          d="M3 5h14M3 10h14M3 15h14"
           stroke="currentColor"
           strokeWidth="1.5"
           strokeLinecap="round"
         />
       </svg>
     ),
-    title: "Rich Note Editor",
+    title: "Organize Topics",
     description:
-      "Write with a clean, distraction-free editor. Format text, add checklists, and embed links — all without leaving your flow.",
+      "Create and manage learning topics with a hierarchical structure. Categorize your knowledge domains and track progress across all areas.",
   },
   {
     id: 2,
@@ -57,9 +57,9 @@ const ALL_FEATURES = [
         />
       </svg>
     ),
-    title: "Task Tracking",
+    title: "Track Skill Evolution",
     description:
-      "Turn notes into actionable tasks with due dates and status tracking. Never lose sight of what needs to be done.",
+      "Monitor your skill progression from manual to automated. Measure complexity, track automation levels, and understand your growth journey.",
   },
   {
     id: 3,
@@ -74,9 +74,9 @@ const ALL_FEATURES = [
         <circle cx="10" cy="10" r="7" stroke="currentColor" strokeWidth="1.5" />
       </svg>
     ),
-    title: "Smart Organization",
+    title: "Smart Code Notes",
     description:
-      "Tag, pin, and categorize your notes effortlessly. Find anything instantly with powerful full-text search.",
+      "Save and organize code snippets with syntax highlighting. Tag, search, and categorize by language for quick reference.",
   },
   {
     id: 4,
@@ -96,9 +96,9 @@ const ALL_FEATURES = [
         />
       </svg>
     ),
-    title: "Progress Insights",
+    title: "Project Management",
     description:
-      "Visualize your productivity at a glance. Weekly summaries and streaks keep you motivated and on track.",
+      "Create and manage learning projects. Link topics, track status, and monitor your project progress with connected learning paths.",
   },
   {
     id: 5,
@@ -113,9 +113,9 @@ const ALL_FEATURES = [
         />
       </svg>
     ),
-    title: "Version History",
+    title: "Spaced Repetition",
     description:
-      "Every edit is saved. Review past versions of any note and restore with one click — no work ever lost.",
+      "Automatically track when skills are at risk of regression. Get reminders to review and maintain your hard-earned knowledge.",
   },
   {
     id: 6,
@@ -129,9 +129,9 @@ const ALL_FEATURES = [
         />
       </svg>
     ),
-    title: "Cross-device Sync",
+    title: "Learning Analytics",
     description:
-      "Access your notes anywhere. Changes sync instantly across all your devices, always up to date.",
+      "Visualize your progress with streaks, charts, and insights. Understand your learning velocity and stay motivated with real-time stats.",
   },
 ];
 
@@ -166,11 +166,11 @@ export default function FeaturesSection() {
             className="text-[38px] font-semibold text-slate-900 leading-tight tracking-tight mb-4"
             style={{ fontFamily: "'Playfair Display', Georgia, serif" }}
           >
-            Everything you need to stay organized
+            Everything for accelerated learning
           </h2>
           <p className="text-[15px] text-slate-500 font-light leading-relaxed">
-            Gestor combines note-taking with task management into one seamless
-            workspace.
+            Gestor combines topic tracking, skill evolution, project management,
+            and spaced repetition into one comprehensive learning platform.
           </p>
         </div>
 

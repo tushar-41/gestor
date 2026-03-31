@@ -5,6 +5,7 @@ import { apiCall } from "@/lib/auth";
 import { toast } from "sonner";
 import CreateTopicModal from "@/components/CreateTopicModal";
 import TopicCard from "@/components/TopicCard";
+import ConfirmationModal from "@/components/ConfirmationModal";
 
 export default function TopicsPage() {
   const [topics, setTopics] = useState([]);
@@ -14,6 +15,9 @@ export default function TopicsPage() {
   const [isLoading, setIsLoading] = useState(true);
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [activeTab, setActiveTab] = useState("all"); // all, root, atRisk
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [topicToDelete, setTopicToDelete] = useState(null);
+  const [isDeletingTopic, setIsDeletingTopic] = useState(false);
 
   useEffect(() => {
     fetchTopics();
@@ -67,20 +71,35 @@ export default function TopicsPage() {
     }
   };
 
-  const handleDeleteTopic = async (topicId) => {
-    if (!window.confirm("Are you sure you want to delete this topic?")) return;
+  const handleDeleteTopic = (topicId) => {
+    setTopicToDelete(topicId);
+    setShowDeleteConfirm(true);
+  };
 
+  const confirmDeleteTopic = async () => {
+    if (!topicToDelete) return;
+
+    setIsDeletingTopic(true);
     try {
-      await apiCall(`/api/topics/${topicId}`, {
+      await apiCall(`/api/topics/${topicToDelete}`, {
         method: "DELETE",
       });
 
       toast.success("Topic deleted successfully!");
+      setShowDeleteConfirm(false);
+      setTopicToDelete(null);
       fetchTopics();
     } catch (error) {
       toast.error("Failed to delete topic");
       console.error(error);
+    } finally {
+      setIsDeletingTopic(false);
     }
+  };
+
+  const cancelDeleteTopic = () => {
+    setShowDeleteConfirm(false);
+    setTopicToDelete(null);
   };
 
   const displayedTopics =
@@ -118,13 +137,16 @@ export default function TopicsPage() {
         </div>
         <button
           onClick={() => setShowCreateModal(true)}
-          className="flex items-center gap-2 px-6 py-3 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-[14px] font-medium transition-all shadow-sm hover:shadow-md active:scale-[0.98]"
+          className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-gradient-to-r from-blue-500 to-blue-600 text-white text-[14px] font-semibold transition-all hover:scale-105 active:scale-99"
+          style={{
+            boxShadow: "0 4px 14px rgba(99,102,241,0.35)",
+          }}
         >
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
             <path
               d="M12 5v14M5 12h14"
               stroke="currentColor"
-              strokeWidth="2"
+              strokeWidth="2.2"
               strokeLinecap="round"
             />
           </svg>
@@ -207,33 +229,50 @@ export default function TopicsPage() {
 
       {/* Topics Grid */}
       {displayedTopics.length === 0 ? (
-        <div className="text-center py-12">
-          <svg
-            width="48"
-            height="48"
-            viewBox="0 0 24 24"
-            fill="none"
-            className="mx-auto mb-4 text-slate-300"
+        <div className="bg-white border border-slate-200 rounded-2xl p-16 text-center">
+          <div
+            className="flex items-center justify-center rounded-2xl mx-auto mb-4"
+            style={{ width: 56, height: 56, background: "#eef2ff" }}
           >
-            <path
-              d="M3 5h18M3 10h18M3 15h14"
-              stroke="currentColor"
-              strokeWidth="1.5"
-              strokeLinecap="round"
-            />
-          </svg>
-          <p className="text-slate-500 font-light mb-4">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" style={{ color: "#6366f1" }}>
+              <path
+                d="M3 5h18M3 10h18M3 15h14"
+                stroke="currentColor"
+                strokeWidth="1.5"
+                strokeLinecap="round"
+              />
+            </svg>
+          </div>
+          <p className="text-[15px] font-medium text-slate-700 mb-1">
             {activeTab === "root"
               ? "No root topics yet"
               : activeTab === "atRisk"
                 ? "All topics are in good shape!"
                 : "No topics created yet"}
           </p>
+          <p className="text-[13px] text-slate-400 mb-5">
+            {activeTab === "root"
+              ? "Create topics to get started"
+              : activeTab === "atRisk"
+                ? "Keep up the great work on your learning!"
+                : "Create your first topic to begin organizing your learning"}
+          </p>
           <button
             onClick={() => setShowCreateModal(true)}
-            className="text-blue-600 font-medium hover:text-blue-700 transition-colors"
+            className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl text-[13px] font-semibold text-white bg-gradient-to-r from-blue-500 to-blue-600 transition-all hover:scale-105 active:scale-99"
+            style={{
+              boxShadow: "0 4px 14px rgba(99,102,241,0.3)",
+            }}
           >
-            Create your first topic
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
+              <path
+                d="M12 5v14M5 12h14"
+                stroke="currentColor"
+                strokeWidth="2.2"
+                strokeLinecap="round"
+              />
+            </svg>
+            Create Topic
           </button>
         </div>
       ) : (
@@ -254,6 +293,20 @@ export default function TopicsPage() {
         <CreateTopicModal
           onClose={() => setShowCreateModal(false)}
           onCreate={handleCreateTopic}
+        />
+      )}
+
+      {/* Delete Topic Confirmation Modal */}
+      {showDeleteConfirm && (
+        <ConfirmationModal
+          title="Delete Topic?"
+          description="This action cannot be undone. The topic and all its associated data will be permanently deleted."
+          confirmText="Delete"
+          cancelText="Cancel"
+          isDestructive={true}
+          isLoading={isDeletingTopic}
+          onConfirm={confirmDeleteTopic}
+          onCancel={cancelDeleteTopic}
         />
       )}
     </div>

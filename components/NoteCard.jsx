@@ -3,16 +3,8 @@
 import { useState } from "react";
 
 export default function NoteCard({ note, onEdit, onDelete, onView }) {
-  const [isDeleting, setIsDeleting] = useState(false);
-
-  const handleDelete = async () => {
-    if (!window.confirm("Are you sure you want to delete this note?")) return;
-    setIsDeleting(true);
-    try {
-      await onDelete(note.id);
-    } finally {
-      setIsDeleting(false);
-    }
+  const handleDelete = () => {
+    onDelete(note.id);
   };
 
   const getLanguageBadgeColor = (language) => {
@@ -46,7 +38,7 @@ export default function NoteCard({ note, onEdit, onDelete, onView }) {
           {note.language && (
             <span
               className={`inline-flex items-center px-2.5 py-1 rounded-lg text-[11px] font-semibold ${getLanguageBadgeColor(
-                note.language
+                note.language,
               )}`}
             >
               <span className="w-1.5 h-1.5 rounded-full bg-current mr-1.5" />
@@ -72,8 +64,7 @@ export default function NoteCard({ note, onEdit, onDelete, onView }) {
           </button>
           <button
             onClick={handleDelete}
-            disabled={isDeleting}
-            className="p-2 rounded-lg hover:bg-red-50 text-slate-400 hover:text-red-600 transition-colors disabled:opacity-50"
+            className="p-2 rounded-lg hover:bg-red-50 text-slate-400 hover:text-red-600 transition-colors"
             title="Delete"
           >
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none">

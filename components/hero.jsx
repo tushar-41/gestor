@@ -22,7 +22,7 @@ export default function Hero() {
           <div className="inline-flex items-center gap-2 bg-blue-50 border border-blue-100 rounded-full px-3.5 py-1.5 mb-8">
             <span className="w-1.5 h-1.5 rounded-full bg-blue-500 animate-pulse" />
             <span className="text-[12px] text-blue-600 font-medium tracking-wide uppercase">
-              Note management, reimagined
+              Learning management, simplified
             </span>
           </div>
 
@@ -31,15 +31,16 @@ export default function Hero() {
             className="text-[52px] md:text-[68px] font-semibold text-slate-900 leading-[1.08] tracking-tight mb-6"
             style={{ fontFamily: "'Playfair Display', Georgia, serif" }}
           >
-            Capture ideas.
+            Master your skills.
             <br />
-            <span className="text-blue-600">Track everything.</span>
+            <span className="text-blue-600">Track your learning.</span>
           </h1>
 
           {/* Subheading */}
           <p className="text-[17px] text-slate-500 leading-relaxed mb-10 max-w-xl mx-auto font-light">
-            Gestor helps you write, organize, and track your notes and tasks —
-            with the clarity you need to stay on top of what matters.
+            Gestor helps you organize topics, create projects, track skill
+            evolution, and manage notes — with spaced repetition and progress
+            insights to accelerate your learning.
           </p>
 
           {/* CTA Buttons */}
@@ -97,9 +98,9 @@ export default function Hero() {
               {/* Sidebar */}
               <div className="w-52 border-r border-slate-100 p-4 bg-slate-50/50 flex flex-col gap-1">
                 <p className="text-[10px] font-semibold text-slate-400 uppercase tracking-widest mb-2 px-2">
-                  Workspace
+                  Dashboard
                 </p>
-                {["📋 All Notes", "✅ Tasks", "📌 Pinned", "🗂 Archive"].map(
+                {["📚 Topics", "💻 Projects", "⭐ Skills", "📝 Notes"].map(
                   (item, i) => (
                     <div
                       key={i}
@@ -115,22 +116,30 @@ export default function Hero() {
                 )}
               </div>
 
-              {/* Note list */}
+              {/* Content area */}
               <div className="flex-1 p-4 flex flex-col gap-2 overflow-hidden">
                 {[
-                  { title: "Q4 Planning Notes", tag: "Work", time: "2m ago" },
                   {
-                    title: "Book recommendations",
-                    tag: "Personal",
+                    title: "React Fundamentals",
+                    tag: "Frontend",
+                    time: "2m ago",
+                  },
+                  {
+                    title: "Database Design Patterns",
+                    tag: "Backend",
                     time: "1h ago",
                   },
                   {
-                    title: "Sprint retrospective",
-                    tag: "Work",
+                    title: "Web Performance",
+                    tag: "DevOps",
                     time: "Yesterday",
                   },
-                  { title: "Weekly review", tag: "Habit", time: "2d ago" },
-                ].map((note, i) => (
+                  {
+                    title: "Node.js Best Practices",
+                    tag: "Backend",
+                    time: "2d ago",
+                  },
+                ].map((skill, i) => (
                   <div
                     key={i}
                     className={`flex items-center justify-between px-3 py-2.5 rounded-lg border ${
@@ -143,22 +152,22 @@ export default function Hero() {
                       <p
                         className={`text-[12px] font-medium ${i === 0 ? "text-blue-800" : "text-slate-700"}`}
                       >
-                        {note.title}
+                        {skill.title}
                       </p>
                       <p className="text-[10px] text-slate-400 mt-0.5">
-                        {note.time}
+                        {skill.time}
                       </p>
                     </div>
                     <span
                       className={`text-[10px] font-medium px-2 py-0.5 rounded-full ${
-                        note.tag === "Work"
+                        skill.tag === "Backend"
                           ? "bg-blue-100 text-blue-600"
-                          : note.tag === "Habit"
-                            ? "bg-emerald-100 text-emerald-600"
-                            : "bg-slate-100 text-slate-500"
+                          : skill.tag === "Frontend"
+                            ? "bg-purple-100 text-purple-600"
+                            : "bg-emerald-100 text-emerald-600"
                       }`}
                     >
-                      {note.tag}
+                      {skill.tag}
                     </span>
                   </div>
                 ))}

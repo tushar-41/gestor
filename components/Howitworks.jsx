@@ -1,27 +1,27 @@
 const STEPS = [
   {
     number: "01",
-    title: "Create your workspace",
+    title: "Create topics",
     description:
-      "Sign up in seconds. Your personal workspace is ready instantly — no setup needed, just start writing.",
+      "Sign up and start organizing your learning. Create topics for different skill domains or subjects you want to master.",
   },
   {
     number: "02",
-    title: "Capture and organize",
+    title: "Save code & notes",
     description:
-      "Write notes freely. Use tags, folders, and pins to structure your thinking any way that works for you.",
+      "Save code snippets, notes, and resources for each topic. Tag by language and organize for quick reference and learning.",
   },
   {
     number: "03",
-    title: "Turn notes into tasks",
+    title: "Track skill evolution",
     description:
-      "Flag anything as a task, assign a due date, and track its progress — right alongside the note it came from.",
+      "Monitor how your skills evolve. Track automation levels, complexity, and progression as you move from learning to mastery.",
   },
   {
     number: "04",
-    title: "Review and reflect",
+    title: "Review & improve",
     description:
-      "Check your weekly summary, see what you've completed, and use insights to improve how you work.",
+      "Get spaced repetition reminders for skills at risk. Use analytics to visualize progress and maintain momentum in your learning journey.",
   },
 ];
 
@@ -38,11 +38,11 @@ export default function HowItWorksSection() {
             className="text-[38px] font-semibold text-slate-900 leading-tight tracking-tight mb-4"
             style={{ fontFamily: "'Playfair Display', Georgia, serif" }}
           >
-            From idea to action in minutes
+            Master your learning journey
           </h2>
           <p className="text-[15px] text-slate-500 font-light leading-relaxed">
-            A simple four-step flow that gets out of your way and lets you focus
-            on what matters.
+            A simple four-step flow to organize, track, and accelerate your
+            learning with spaced repetition and analytics.
           </p>
         </div>
 
@@ -82,10 +82,10 @@ export default function HowItWorksSection() {
               className="text-[24px] font-semibold text-white leading-tight mb-1"
               style={{ fontFamily: "'Playfair Display', Georgia, serif" }}
             >
-              Ready to take control of your notes?
+              Ready to accelerate your learning?
             </h3>
             <p className="text-blue-200 text-[14px] font-light">
-              Join thousands of people already using Gestor.
+              Join thousands of developers mastering new skills with Gestor.
             </p>
           </div>
           <a

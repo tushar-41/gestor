@@ -8,6 +8,7 @@ import CreateNoteModal from "@/components/CreateNoteModal";
 import EditNoteModal from "@/components/EditNoteModal";
 import NoteCard from "@/components/NoteCard";
 import NoteDetailsModal from "@/components/NoteDetailsModal";
+import ConfirmationModal from "@/components/ConfirmationModal";
 
 export default function NotesPage() {
   const [selectedTopic, setSelectedTopic] = useState(null);
@@ -21,6 +22,9 @@ export default function NotesPage() {
   const [showEditModal, setShowEditModal] = useState(false);
   const [showDetailModal, setShowDetailModal] = useState(false);
   const [selectedNote, setSelectedNote] = useState(null);
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [noteToDelete, setNoteToDelete] = useState(null);
+  const [isDeletingNote, setIsDeletingNote] = useState(false);
 
   // Fetch notes when topic is selected
   useEffect(() => {
@@ -121,18 +125,35 @@ export default function NotesPage() {
     }
   };
 
-  const handleDeleteNote = async (noteId) => {
+  const handleDeleteNote = (noteId) => {
+    setNoteToDelete(noteId);
+    setShowDeleteConfirm(true);
+  };
+
+  const confirmDeleteNote = async () => {
+    if (!noteToDelete) return;
+
+    setIsDeletingNote(true);
     try {
-      await apiCall(`/api/topics/${selectedTopic}/notes/${noteId}`, {
+      await apiCall(`/api/topics/${selectedTopic}/notes/${noteToDelete}`, {
         method: "DELETE",
       });
 
       toast.success("Note deleted successfully!");
+      setShowDeleteConfirm(false);
+      setNoteToDelete(null);
       fetchNotes();
     } catch (error) {
       toast.error("Failed to delete note");
       console.error(error);
+    } finally {
+      setIsDeletingNote(false);
     }
+  };
+
+  const cancelDeleteNote = () => {
+    setShowDeleteConfirm(false);
+    setNoteToDelete(null);
   };
 
   const handleEditClick = (note) => {
@@ -202,13 +223,16 @@ export default function NotesPage() {
             {/* Create Button - Responsive & Active */}
             <button
               onClick={() => setShowCreateModal(true)}
-              className="flex items-center justify-center gap-2 px-6 py-3 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-[14px] font-medium transition-all shadow-sm hover:shadow-md active:scale-[0.98] whitespace-nowrap md:w-auto w-full"
+              className="flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl bg-gradient-to-r from-blue-500 to-blue-600 text-white text-[14px] font-semibold transition-all hover:scale-105 active:scale-99 whitespace-nowrap md:w-auto w-full"
+              style={{
+                boxShadow: "0 4px 14px rgba(99,102,241,0.35)",
+              }}
             >
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
                 <path
                   d="M12 5v14M5 12h14"
                   stroke="currentColor"
-                  strokeWidth="2"
+                  strokeWidth="2.2"
                   strokeLinecap="round"
                 />
               </svg>
@@ -256,35 +280,57 @@ export default function NotesPage() {
             </div>
           ) : filteredNotes.length === 0 ? (
             <div className="bg-white border border-slate-200 rounded-2xl p-12 text-center">
-              <svg
-                width="48"
-                height="48"
-                viewBox="0 0 24 24"
-                fill="none"
-                className="mx-auto mb-4 text-slate-300"
+              <div
+                className="flex items-center justify-center rounded-2xl mx-auto mb-4"
+                style={{ width: 56, height: 56, background: "#eef2ff" }}
               >
-                <path
-                  d="M4 3h12a1 1 0 011 1v12a1 1 0 01-1 1H4a1 1 0 01-1-1V4a1 1 0 011-1z"
-                  stroke="currentColor"
-                  strokeWidth="1.5"
-                />
-                <path
-                  d="M6 7h8M6 10h8M6 13h5"
-                  stroke="currentColor"
-                  strokeWidth="1.5"
-                  strokeLinecap="round"
-                />
-              </svg>
-              <p className="text-slate-500 font-light mb-4">
+                <svg
+                  width="28"
+                  height="28"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  style={{ color: "#6366f1" }}
+                >
+                  <path
+                    d="M4 3h12a1 1 0 011 1v12a1 1 0 01-1 1H4a1 1 0 01-1-1V4a1 1 0 011-1z"
+                    stroke="currentColor"
+                    strokeWidth="1.5"
+                    fill="none"
+                  />
+                  <path
+                    d="M6 7h8M6 10h8M6 13h5"
+                    stroke="currentColor"
+                    strokeWidth="1.5"
+                    strokeLinecap="round"
+                  />
+                </svg>
+              </div>
+              <p className="text-[15px] font-medium text-slate-700 mb-1">
                 {searchQuery || languageFilter
                   ? "No notes match your filters"
                   : "No notes yet. Create your first note!"}
               </p>
+              <p className="text-[13px] text-slate-400 mb-5">
+                {searchQuery || languageFilter
+                  ? "Try adjusting your search or filters"
+                  : "Start writing and organizing your code snippets"}
+              </p>
               {!searchQuery && !languageFilter && (
                 <button
                   onClick={() => setShowCreateModal(true)}
-                  className="text-blue-600 font-medium hover:text-blue-700 transition-colors"
+                  className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl text-[13px] font-semibold text-white bg-gradient-to-r from-blue-500 to-blue-600 transition-all hover:scale-105 active:scale-99"
+                  style={{
+                    boxShadow: "0 4px 14px rgba(99,102,241,0.3)",
+                  }}
                 >
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
+                    <path
+                      d="M12 5v14M5 12h14"
+                      stroke="currentColor"
+                      strokeWidth="2.2"
+                      strokeLinecap="round"
+                    />
+                  </svg>
                   Create Note
                 </button>
               )}
@@ -332,6 +378,20 @@ export default function NotesPage() {
             setShowDetailModal(false);
             setSelectedNote(null);
           }}
+        />
+      )}
+
+      {/* Delete Note Confirmation Modal */}
+      {showDeleteConfirm && (
+        <ConfirmationModal
+          title="Delete Note?"
+          description="This action cannot be undone. The note and all its associated data will be permanently deleted."
+          confirmText="Delete"
+          cancelText="Cancel"
+          isDestructive={true}
+          isLoading={isDeletingNote}
+          onConfirm={confirmDeleteNote}
+          onCancel={cancelDeleteNote}
         />
       )}
     </div>
