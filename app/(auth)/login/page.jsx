@@ -29,7 +29,7 @@ const Login = () => {
     setIsLoading(true);
     try {
       const response = await fetch(
-        "https://devpathtracker-prod.up.railway.app/auth/login",
+        `${process.env.NEXT_PUBLIC_API_URL}/auth/login`,
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },

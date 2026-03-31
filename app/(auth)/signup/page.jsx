@@ -29,7 +29,7 @@ const Signup = () => {
     e.preventDefault();
     try {
       const response = await fetch(
-        "https://devpathtracker-prod.up.railway.app/auth/signup",
+        `${process.env.NEXT_PUBLIC_API_URL}/auth/signup`,
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
