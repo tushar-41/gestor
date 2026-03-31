@@ -259,7 +259,7 @@ export default function SkillEvolutionModal({ familyId, onClose, onSuccess }) {
                 onChange={handleChange}
                 placeholder="Compare code examples..."
                 rows="3"
-                className="w-full px-3 py-2 border border-slate-300 rounded-lg text-[14px] placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none font-mono text-[12px]"
+                className="w-full px-3 py-2 border border-slate-300 rounded-lg text-[14px] placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none font-mono"
               />
             </div>
 

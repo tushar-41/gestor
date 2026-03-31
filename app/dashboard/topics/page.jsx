@@ -137,7 +137,7 @@ export default function TopicsPage() {
         </div>
         <button
           onClick={() => setShowCreateModal(true)}
-          className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-gradient-to-r from-blue-500 to-blue-600 text-white text-[14px] font-semibold transition-all hover:scale-105 active:scale-99"
+          className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-linear-to-r from-blue-500 to-blue-600 text-white text-[14px] font-semibold transition-all hover:scale-105 active:scale-99"
           style={{
             boxShadow: "0 4px 14px rgba(99,102,241,0.35)",
           }}
@@ -234,7 +234,13 @@ export default function TopicsPage() {
             className="flex items-center justify-center rounded-2xl mx-auto mb-4"
             style={{ width: 56, height: 56, background: "#eef2ff" }}
           >
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" style={{ color: "#6366f1" }}>
+            <svg
+              width="24"
+              height="24"
+              viewBox="0 0 24 24"
+              fill="none"
+              style={{ color: "#6366f1" }}
+            >
               <path
                 d="M3 5h18M3 10h18M3 15h14"
                 stroke="currentColor"
@@ -259,7 +265,7 @@ export default function TopicsPage() {
           </p>
           <button
             onClick={() => setShowCreateModal(true)}
-            className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl text-[13px] font-semibold text-white bg-gradient-to-r from-blue-500 to-blue-600 transition-all hover:scale-105 active:scale-99"
+            className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl text-[13px] font-semibold text-white bg-linear-to-r from-blue-500 to-blue-600 transition-all hover:scale-105 active:scale-99"
             style={{
               boxShadow: "0 4px 14px rgba(99,102,241,0.3)",
             }}

@@ -14,7 +14,7 @@ export default function Hero() {
       />
 
       {/* Soft blue glow */}
-      <div className="absolute top-20 left-1/2 -translate-x-1/2 w-[600px] h-[300px] bg-blue-100 rounded-full blur-3xl opacity-40 pointer-events-none" />
+      <div className="absolute top-20 left-1/2 -translate-x-1/2 w-150 h-75 bg-blue-100 rounded-full blur-3xl opacity-40 pointer-events-none" />
 
       <div className="max-w-6xl mx-auto relative">
         <div className="max-w-3xl mx-auto text-center">

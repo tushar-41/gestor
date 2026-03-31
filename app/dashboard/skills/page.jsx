@@ -166,7 +166,7 @@ export default function SkillsPage() {
         </div>
         <button
           onClick={() => setShowCreateModal(true)}
-          className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-gradient-to-r from-blue-500 to-blue-600 text-white text-[14px] font-semibold transition-all hover:scale-105 active:scale-99"
+          className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-linear-to-r from-blue-500 to-blue-600 text-white text-[14px] font-semibold transition-all hover:scale-105 active:scale-99"
           style={{
             boxShadow: "0 4px 14px rgba(99,102,241,0.35)",
           }}
@@ -235,7 +235,13 @@ export default function SkillsPage() {
             className="flex items-center justify-center rounded-2xl mx-auto mb-4"
             style={{ width: 56, height: 56, background: "#eef2ff" }}
           >
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" style={{ color: "#6366f1" }}>
+            <svg
+              width="24"
+              height="24"
+              viewBox="0 0 24 24"
+              fill="none"
+              style={{ color: "#6366f1" }}
+            >
               <path
                 d="M4 6C4 4.89543 4.89543 4 6 4H18C19.1046 4 20 4.89543 20 6V18C20 19.1046 19.1046 20 18 20H6C4.89543 20 4 19.1046 4 18V6Z"
                 stroke="currentColor"
@@ -259,7 +265,7 @@ export default function SkillsPage() {
           </p>
           <button
             onClick={() => setShowCreateModal(true)}
-            className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl text-[13px] font-semibold text-white bg-gradient-to-r from-blue-500 to-blue-600 transition-all hover:scale-105 active:scale-99"
+            className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl text-[13px] font-semibold text-white bg-linear-to-r from-blue-500 to-blue-600 transition-all hover:scale-105 active:scale-99"
             style={{
               boxShadow: "0 4px 14px rgba(99,102,241,0.3)",
             }}

@@ -223,7 +223,7 @@ export default function NotesPage() {
             {/* Create Button - Responsive & Active */}
             <button
               onClick={() => setShowCreateModal(true)}
-              className="flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl bg-gradient-to-r from-blue-500 to-blue-600 text-white text-[14px] font-semibold transition-all hover:scale-105 active:scale-99 whitespace-nowrap md:w-auto w-full"
+              className="flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl bg-linear-to-r from-blue-500 to-blue-600 text-white text-[14px] font-semibold transition-all hover:scale-105 active:scale-99 whitespace-nowrap md:w-auto w-full"
               style={{
                 boxShadow: "0 4px 14px rgba(99,102,241,0.35)",
               }}
@@ -318,7 +318,7 @@ export default function NotesPage() {
               {!searchQuery && !languageFilter && (
                 <button
                   onClick={() => setShowCreateModal(true)}
-                  className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl text-[13px] font-semibold text-white bg-gradient-to-r from-blue-500 to-blue-600 transition-all hover:scale-105 active:scale-99"
+                  className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl text-[13px] font-semibold text-white bg-linear-to-r from-blue-500 to-blue-600 transition-all hover:scale-105 active:scale-99"
                   style={{
                     boxShadow: "0 4px 14px rgba(99,102,241,0.3)",
                   }}
